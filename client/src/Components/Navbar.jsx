@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react';
 
-const Navbar = () => {
+// Create MotionLink component
+const MotionLink = motion(Link);
+
+// LogoutButton component (placeholder)
+const LogoutButton = () => (
+  <button onClick={() => console.log('Logout')}>
+    Logout
+  </button>
+);
+
+const Navbar = ({ isLoggedIn = false }) => { // Accept as prop
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -17,21 +28,38 @@ const Navbar = () => {
   }, []);
 
   const navItems = [
-    { name: 'Home', href: '/home' },
-    { name: 'About', href: '/about' },
+    { name: 'Home', path: '/home' },
+    { name: 'About', path: '/about' },
     {
       name: 'Services',
+      path: '/services', // Add path for parent
       dropdown: [
-        { name: ' Progress Tracking', href: '/progress' },
-        { name: ' Skill Gap Analysis', href: '/skill-gap' },
-        { name: 'Recommendations', href: '/Recommendations' }
+        { name: 'Progress Tracking', path: '/progress' },
+        { name: 'Skill Gap Analysis', path: '/skill-gap' },
+        { name: 'Recommendations', path: '/recommendations' }
       ]
     },
-    { name: 'Contact', href: '#contact' }
+    { name: 'Contact', path: '/contact' } // Use consistent routing
   ];
 
   const toggleMobile = () => setIsOpen(!isOpen);
   const closeMobile = () => setIsOpen(false);
+
+  const renderCTA = () => {
+    if (!isLoggedIn) {
+      return (
+        <MotionLink
+          to="/register"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 md:rounded-lg md:font-medium shadow-lg hover:shadow-xl transition-shadow inline-block w-full text-center md:w-auto md:inline font-semibold text-lg rounded-xl md:text-base"
+        >
+          Get Started
+        </MotionLink>
+      );
+    }
+    return <LogoutButton />;
+  };
 
   return (
     <motion.nav
@@ -49,7 +77,7 @@ const Navbar = () => {
             whileTap={{ scale: 0.95 }}
             className="flex-shrink-0"
           >
-            <a href="#" className="flex items-center">
+            <Link to="/" className="flex items-center">
               <div className="w-fit h-fit p-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">LOGO</span>
               </div>
@@ -60,7 +88,7 @@ const Navbar = () => {
                 </span>
                 <span className="ml-1 text-2xl font-bold text-purple-800">AI</span>
               </span>
-            </a>
+            </Link>
           </motion.div>
 
           {/* Desktop Navigation */}
@@ -68,12 +96,12 @@ const Navbar = () => {
             <div className="flex items-center space-x-1">
               {navItems.map((item, index) => (
                 <div key={item.name} className="relative group">
-                  <motion.a
-                    href={item.href}
+                  <MotionLink
+                    to={item.path || '#'}
                     whileHover={{ y: -2 }}
                     onMouseEnter={() => item.dropdown && setActiveDropdown(index)}
                     onMouseLeave={() => setActiveDropdown(null)}
-                    className={`px-4 py-2 rounded-lg text-base font-medium transition-all duration-200 flex items-center  hover:font-bold   ${isScrolled
+                    className={`px-4 py-2 rounded-lg text-base font-medium transition-all duration-200 flex items-center hover:font-bold ${isScrolled
                       ? 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                       : 'text-slate-700 hover:text-indigo-600 hover:bg-white/10'
                       }`}
@@ -82,7 +110,7 @@ const Navbar = () => {
                     {item.dropdown && (
                       <ChevronDown className="ml-1 mt-0.5 w-4 h-4 transition-transform group-hover:rotate-180" />
                     )}
-                  </motion.a>
+                  </MotionLink>
 
                   {/* Dropdown Menu */}
                   <AnimatePresence>
@@ -97,14 +125,15 @@ const Navbar = () => {
                         className="absolute top-full left-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2"
                       >
                         {item.dropdown.map((dropItem) => (
-                          <motion.a
+                          <MotionLink
                             key={dropItem.name}
-                            href={dropItem.href}
+                            to={dropItem.path}
                             whileHover={{ x: 4 }}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors rounded-xl hover:font-bold"
                           >
-                            <ChevronRight className="mr-1 w-4 h-4 inline" />  {dropItem.name}
-                          </motion.a>
+                            <ChevronRight className="mr-1 w-4 h-4 inline" />
+                            {dropItem.name}
+                          </MotionLink>
                         ))}
                       </motion.div>
                     )}
@@ -116,13 +145,7 @@ const Navbar = () => {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg font-medium shadow-lg hover:shadow-xl transition-shadow"
-            >
-              Get Started
-            </motion.button>
+            {renderCTA()}
           </div>
 
           {/* Mobile menu button */}
@@ -130,8 +153,9 @@ const Navbar = () => {
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={toggleMobile}
+              aria-label="Toggle mobile menu"
               className={`p-2 rounded-lg transition-colors ${isScrolled
-                ? 'text-gray-700 hover:bg-violate-50 hover:text-100'
+                ? 'text-gray-700 hover:bg-violet-50'
                 : 'text-slate-500 hover:bg-white/10'
                 }`}
             >
@@ -155,46 +179,42 @@ const Navbar = () => {
               <div className="flex flex-col space-y-1">
                 {navItems.map((item, index) => (
                   <div key={item.name}>
-                    <motion.a
+                    <MotionLink
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      href={item.href}
+                      to={item.path}
                       onClick={closeMobile}
                       className="block px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg font-medium transition-colors"
                     >
                       {item.name}
-                    </motion.a>
+                    </MotionLink>
 
                     {/* Mobile Dropdown */}
                     {item.dropdown && (
                       <div className="ml-4 space-y-1">
                         {item.dropdown.map((dropItem, dropIndex) => (
-                          <motion.a
+                          <MotionLink
                             key={dropItem.name}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: (index * 0.1) + (dropIndex * 0.05) }}
-                            href={dropItem.href}
+                            to={dropItem.path}
                             onClick={closeMobile}
                             className="block px-4 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          ><ChevronRight className="mr-1 w-4 h-4 inline" />  {dropItem.name}
-                          </motion.a>
+                          >
+                            <ChevronRight className="mr-1 w-4 h-4 inline" />
+                            {dropItem.name}
+                          </MotionLink>
                         ))}
                       </div>
                     )}
                   </div>
                 ))}
 
-                <motion.button
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: navItems.length * 0.1 }}
-                  className="mt-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg font-medium shadow-lg mx-4"
-                  onClick={closeMobile}
-                >
-                  Get Started
-                </motion.button>
+                <div className="mt-4 px-4">
+                  {renderCTA()}
+                </div>
               </div>
             </div>
           </motion.div>
