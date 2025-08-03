@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
-import { motion } from 'framer-motion';
+import { motion } from "motion/react";
 import { Eye, EyeOff, Mail, Lock, ArrowRight, LogIn } from 'lucide-react';
 
 const Login = () => {

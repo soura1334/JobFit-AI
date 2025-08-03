@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, ChevronDown, ChevronRight,Sparkles  } from 'lucide-react';
 
 // Create MotionLink component
