@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion"
-import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronRight,Sparkles  } from 'lucide-react';
 
 // Create MotionLink component
 const MotionLink = motion(Link);
@@ -86,7 +86,7 @@ const Navbar = ({ isLoggedIn = false }) => { // Accept as prop
                 <span className="bg-gradient-to-r from-sky-500 to-indigo-600 bg-clip-text text-transparent">
                   JobFit
                 </span>
-                <span className="ml-1 text-2xl font-bold text-purple-800">AI</span>
+                 <span className="ml-1 text-2xl font-bold text-purple-500">AI<Sparkles className='w-3 h-3 inline-block mb-5' /></span>
               </span>
             </Link>
           </motion.div>
@@ -101,10 +101,8 @@ const Navbar = ({ isLoggedIn = false }) => { // Accept as prop
                     whileHover={{ y: -2 }}
                     onMouseEnter={() => item.dropdown && setActiveDropdown(index)}
                     onMouseLeave={() => setActiveDropdown(null)}
-                    className={`px-4 py-2 rounded-lg text-base font-medium transition-all duration-200 flex items-center hover:font-bold ${isScrolled
-                      ? 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
-                      : 'text-slate-700 hover:text-indigo-600 hover:bg-white/10'
-                      }`}
+                    className={`px-4 py-2 rounded-lg text-base font-medium transition-all duration-200 flex items-center hover:font-bold  text-slate-700 hover:text-indigo-600 
+                      `}
                   >
                     {item.name}
                     {item.dropdown && (
