@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
+import { Link } from "react-router-dom";
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, User, Mail, Lock, ArrowRight } from 'lucide-react';
 
-const Register=()=> {
+const Register = () => {
+
+  // Create MotionLink component
+  const MotionLink = motion(Link);
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -153,7 +158,7 @@ const Register=()=> {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
               </button>
             </motion.div>
           </div>
@@ -213,13 +218,13 @@ const Register=()=> {
             className="text-center text-gray-600 mt-6"
           >
             Already have an account?{' '}
-            <motion.a
-              href="#"
+            <MotionLink
+              to="/login"
               whileHover={{ scale: 1.05 }}
               className="text-indigo-600 hover:text-indigo-700 font-medium transition-colors"
             >
               Sign in
-            </motion.a>
+            </MotionLink>
           </motion.p>
         </motion.form>
 
@@ -228,9 +233,9 @@ const Register=()=> {
           variants={itemVariants}
           className="text-center text-sm text-gray-500 mt-6"
         >
-          By creating an account, you agree to our{' '}
-          <a href="#" className="text-indigo-600 hover:text-indigo-700">Terms</a> and{' '}
-          <a href="#" className="text-indigo-600 hover:text-indigo-700">Privacy Policy</a>
+          By signing in, you agree to our{' '}
+          <MotionLink to="/Terms" className="text-blue-600 hover:text-blue-700">Terms</MotionLink> and{' '}
+          <MotionLink to="/Privacy" className="text-blue-600 hover:text-blue-700">Privacy Policy</MotionLink>
         </motion.p>
       </motion.div>
     </div>
