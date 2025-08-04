@@ -245,7 +245,7 @@ const Footer = () => {
                 >
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                         {/* Copyright */}
-                        <p className="text-gray-400 text-sm">
+                        <p className="text-gray-400 text-sm ml-1 md:ml-6">
                             © {new Date().getFullYear()} JobFitAI. All rights reserved.
                         </p>
 

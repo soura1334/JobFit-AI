@@ -14,7 +14,7 @@ const Login = () => {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [focusedField, setFocusedField] = useState('');
-    const [rememberMe, setRememberMe] = useState(false);
+    // const [rememberMe, setRememberMe] = useState(false);
 
     const handleInputChange = (e) => {
         setFormData({

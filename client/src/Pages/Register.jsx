@@ -4,12 +4,12 @@ import { motion } from "motion/react";
 import { Eye, EyeOff, User, Mail, Lock, ArrowRight } from 'lucide-react';
 
 const Register = () => {
-
-  // Create MotionLink component
+  // Create MotionLink component with animations
   const MotionLink = motion(Link);
 
   const [formData, setFormData] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -30,212 +30,264 @@ const Register = () => {
     console.log('Form submitted:', formData);
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
-
-  const inputVariants = {
-    focused: {
-      scale: 1.02,
-      transition: { duration: 0.2 }
-    },
-    unfocused: {
-      scale: 1,
-      transition: { duration: 0.2 }
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
+      <motion.div 
         className="w-full max-w-md"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
       >
         {/* Header */}
-        <motion.div variants={itemVariants} className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+        <motion.div 
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          <motion.div 
+            className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
             <User className="w-8 h-8 text-white" />
-          </div>
+          </motion.div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
           <p className="text-gray-600">Join us and start your journey today</p>
         </motion.div>
 
         {/* Form */}
-        <motion.form
-          variants={itemVariants}
-          onSubmit={handleSubmit}
+        <motion.div 
           className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
-          {/* Full Name Field */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Full Name
-            </label>
-            <motion.div
-              variants={inputVariants}
-              animate={focusedField === 'fullName' ? 'focused' : 'unfocused'}
-              className="relative"
-            >
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                onFocus={() => setFocusedField('fullName')}
-                onBlur={() => setFocusedField('')}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50"
-                placeholder="Enter your full name"
-                required
-              />
-            </motion.div>
-          </div>
-
-          {/* Email Field */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address
-            </label>
-            <motion.div
-              variants={inputVariants}
-              animate={focusedField === 'email' ? 'focused' : 'unfocused'}
-              className="relative"
-            >
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                onFocus={() => setFocusedField('email')}
-                onBlur={() => setFocusedField('')}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50"
-                placeholder="Enter your email"
-                required
-              />
-            </motion.div>
-          </div>
-
-          {/* Password Field */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <motion.div
-              variants={inputVariants}
-              animate={focusedField === 'password' ? 'focused' : 'unfocused'}
-              className="relative"
-            >
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                onFocus={() => setFocusedField('password')}
-                onBlur={() => setFocusedField('')}
-                className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50"
-                placeholder="Create a password"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+          <form onSubmit={handleSubmit}>
+            {/* First Name and Last Name Fields */}
+            <div className="mb-6 grid grid-cols-2 gap-4">
+              {/* First Name */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
               >
-                {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
-              </button>
-            </motion.div>
-          </div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  First Name
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <motion.input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField('firstName')}
+                    onBlur={() => setFocusedField('')}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50"
+                    placeholder="First name"
+                    required
+                    whileFocus={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  />
+                </div>
+              </motion.div>
 
-          {/* Confirm Password Field */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Confirm Password
-            </label>
-            <motion.div
-              variants={inputVariants}
-              animate={focusedField === 'confirmPassword' ? 'focused' : 'unfocused'}
-              className="relative"
-            >
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                onFocus={() => setFocusedField('confirmPassword')}
-                onBlur={() => setFocusedField('')}
-                className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50"
-                placeholder="Confirm your password"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              {/* Last Name */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
               >
-                {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
-            </motion.div>
-          </div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Last Name
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <motion.input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField('lastName')}
+                    onBlur={() => setFocusedField('')}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50"
+                    placeholder="Last name"
+                    required
+                    whileFocus={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  />
+                </div>
+              </motion.div>
+            </div>
 
-          {/* Submit Button */}
-          <motion.button
-            type="submit"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 px-6 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center group"
-          >
-            Create Account
-            <motion.div
-              className="ml-2"
-              animate={{ x: [0, 4, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            {/* Email Field */}
+            <motion.div 
+              className="mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <ArrowRight className="w-5 h-5" />
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <motion.input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  onFocus={() => setFocusedField('email')}
+                  onBlur={() => setFocusedField('')}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50"
+                  placeholder="Enter your email"
+                  required
+                  whileFocus={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                />
+              </div>
             </motion.div>
-          </motion.button>
+
+            {/* Password Field */}
+            <motion.div 
+              className="mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <motion.input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  onFocus={() => setFocusedField('password')}
+                  onBlur={() => setFocusedField('')}
+                  className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50"
+                  placeholder="Create a password"
+                  required
+                  whileFocus={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                />
+                <motion.button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                </motion.button>
+              </div>
+            </motion.div>
+
+            {/* Confirm Password Field */}
+            <motion.div 
+              className="mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <motion.input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  onFocus={() => setFocusedField('confirmPassword')}
+                  onBlur={() => setFocusedField('')}
+                  className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50"
+                  placeholder="Confirm your password"
+                  required
+                  whileFocus={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                />
+                <motion.button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </motion.button>
+              </div>
+            </motion.div>
+
+            {/* Submit Button */}
+            <motion.button
+              type="submit"
+              className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 px-6 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center group cursor-pointer"
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+            >
+              Create Account
+              <motion.div 
+                className="ml-2"
+                animate={{ x: 0 }}
+                whileHover={{ x: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <ArrowRight className="w-5 h-5" />
+              </motion.div>
+            </motion.button>
+          </form>
 
           {/* Login Link */}
-          <motion.p
-            variants={itemVariants}
+          <motion.p 
             className="text-center text-gray-600 mt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
           >
             Already have an account?{' '}
             <MotionLink
               to="/login"
+              className="text-indigo-600 hover:text-indigo-700 font-medium transition-colors hover:underline"
               whileHover={{ scale: 1.05 }}
-              className="text-indigo-600 hover:text-indigo-700 font-medium transition-colors"
+              transition={{ type: "spring", stiffness: 300 }}
             >
               Sign in
             </MotionLink>
           </motion.p>
-        </motion.form>
+        </motion.div>
 
         {/* Footer */}
-        <motion.p
-          variants={itemVariants}
+        <motion.p 
           className="text-center text-sm text-gray-500 mt-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.9 }}
         >
-          By signing in, you agree to our{' '}
-          <MotionLink to="/Terms" className="text-blue-600 hover:text-blue-700">Terms</MotionLink> and{' '}
-          <MotionLink to="/Privacy" className="text-blue-600 hover:text-blue-700">Privacy Policy</MotionLink>
+          By signing up, you agree to our{' '}
+          <MotionLink 
+            to="/terms" 
+            className="text-blue-600 hover:text-blue-700 hover:underline"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            Terms
+          </MotionLink> and{' '}
+          <MotionLink 
+            to="/privacy" 
+            className="text-blue-600 hover:text-blue-700 hover:underline"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            Privacy Policy
+          </MotionLink>
         </motion.p>
       </motion.div>
     </div>

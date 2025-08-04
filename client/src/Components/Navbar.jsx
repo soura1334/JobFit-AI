@@ -8,12 +8,14 @@ const MotionLink = motion(Link);
 
 // LogoutButton component (placeholder)
 const LogoutButton = () => (
-  <button onClick={() => console.log('Logout')}>
+  <motion.button whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="bg-gradient-to-br from-rose-400 via-pink-600 to-red-600 text-white px-6 py-2 md:rounded-lg md:font-medium shadow-lg hover:shadow-xl transition-shadow inline-block w-full text-center md:w-auto md:inline font-semibold text-lg rounded-xl md:text-base cursor-pointer" onClick={() => console.log('Logout')}>
     Logout
-  </button>
+  </motion.button>
 );
 
-const Navbar = ({ isLoggedIn = false }) => { // Accept as prop
+const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
