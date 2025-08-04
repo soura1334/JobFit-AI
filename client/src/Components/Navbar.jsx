@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, ChevronDown, ChevronRight,Sparkles  } from 'lucide-react';
@@ -16,6 +16,7 @@ const LogoutButton = () => (
 );
 
 const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
+
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -25,23 +26,23 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navItems = [
-    { name: 'Home', path: '/home' },
-    { name: 'About', path: '/about' },
+    { name: "Home", path: "/home" },
+    { name: "About", path: "/about" },
     {
-      name: 'Services',
-      path: '/services', // Add path for parent
+      name: "Services",
+      path: "/services", // Add path for parent
       dropdown: [
-        { name: 'Progress Tracking', path: '/progress' },
-        { name: 'Skill Gap Analysis', path: '/skill-gap' },
-        { name: 'Recommendations', path: '/recommendations' }
-      ]
+        { name: "Progress Tracking", path: "/progress" },
+        { name: "Skill Gap Analysis", path: "/skill-gap" },
+        { name: "Recommendations", path: "/recommendations" },
+      ],
     },
-    { name: 'Contact', path: '/contact' } // Use consistent routing
+    { name: "Contact", path: "/contact" }, // Use consistent routing
   ];
 
   const toggleMobile = () => setIsOpen(!isOpen);
@@ -68,11 +69,10 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className='fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-lg border-b border-white/20 rounded-b-xl shadow-md'
+      className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-lg border-b border-white/20 rounded-b-xl shadow-md"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
-
           {/* Logo */}
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -80,11 +80,12 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
             className="flex-shrink-0"
           >
             <Link to="/" className="flex items-center">
-              <div className="w-fit h-fit p-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">LOGO</span>
-              </div>
-              <span className={`ml-2 text-2xl font-bold transition-colors tracking-tight ${isScrolled ? 'text-gray-900' : 'text-sky-600'
-                }`}>
+              <img src="logo.png" alt="logo" className="h-10" />
+              <span
+                className={`ml-2 text-2xl font-bold transition-colors tracking-tight ${
+                  isScrolled ? "text-gray-900" : "text-sky-600"
+                }`}
+              >
                 <span className="bg-gradient-to-r from-sky-500 to-indigo-600 bg-clip-text text-transparent">
                   JobFit
                 </span>
@@ -99,9 +100,11 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
               {navItems.map((item, index) => (
                 <div key={item.name} className="relative group">
                   <MotionLink
-                    to={item.path || '#'}
+                    to={item.path || "#"}
                     whileHover={{ y: -2 }}
-                    onMouseEnter={() => item.dropdown && setActiveDropdown(index)}
+                    onMouseEnter={() =>
+                      item.dropdown && setActiveDropdown(index)
+                    }
                     onMouseLeave={() => setActiveDropdown(null)}
                     className={`px-4 py-2 rounded-lg text-base font-medium transition-all duration-200 flex items-center hover:font-bold  text-slate-700 hover:text-indigo-600 
                       `}
@@ -144,9 +147,7 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
           </div>
 
           {/* CTA Button */}
-          <div className="hidden md:block">
-            {renderCTA()}
-          </div>
+          <div className="hidden md:block">{renderCTA()}</div>
 
           {/* Mobile menu button */}
           <div className="md:hidden">
@@ -154,10 +155,11 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
               whileTap={{ scale: 0.95 }}
               onClick={toggleMobile}
               aria-label="Toggle mobile menu"
-              className={`p-2 rounded-lg transition-colors ${isScrolled
-                ? 'text-gray-700 hover:bg-violet-50'
-                : 'text-slate-500 hover:bg-white/10'
-                }`}
+              className={`p-2 rounded-lg transition-colors ${
+                isScrolled
+                  ? "text-gray-700 hover:bg-violet-50"
+                  : "text-slate-500 hover:bg-white/10"
+              }`}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </motion.button>
@@ -170,7 +172,7 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
             className="md:hidden bg-white/95 backdrop-blur-md border-t border-gray-200"
@@ -198,7 +200,9 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
                             key={dropItem.name}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: (index * 0.1) + (dropIndex * 0.05) }}
+                            transition={{
+                              delay: index * 0.1 + dropIndex * 0.05,
+                            }}
                             to={dropItem.path}
                             onClick={closeMobile}
                             className="block px-4 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
@@ -212,9 +216,7 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
                   </div>
                 ))}
 
-                <div className="mt-4 px-4">
-                  {renderCTA()}
-                </div>
+                <div className="mt-4 px-4">{renderCTA()}</div>
               </div>
             </div>
           </motion.div>
