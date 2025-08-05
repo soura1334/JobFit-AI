@@ -206,7 +206,7 @@ const Login = () => {
                     variants={itemVariants}
                     className="text-center text-sm text-gray-500 mt-6"
                 >
-                    By signMotionLinking in, you agree to our{' '}
+                    By continuing, you agree to our{' '}
                     <MotionLink to="/Terms" className="text-blue-600 hover:text-blue-700">Terms</MotionLink> and{' '}
                     <MotionLink to="/Privacy" className="text-blue-600 hover:text-blue-700">Privacy Policy</MotionLink>
                 </motion.p>

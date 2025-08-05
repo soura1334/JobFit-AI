@@ -15,7 +15,7 @@ const LogoutButton = () => (
   </motion.button>
 );
 
-const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
+const Navbar = ({ isLoggedIn }) => { // Accept as prop
 
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -31,7 +31,7 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
   }, []);
 
   const navItems = [
-    { name: "Home", path: "/home" },
+    { name: "Home", path: "/dashboard" },
     { name: "About", path: "/about" },
     {
       name: "Services",
