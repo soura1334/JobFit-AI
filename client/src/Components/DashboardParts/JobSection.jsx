@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from "motion/react";
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import {
   Search,
   Filter,
@@ -17,7 +17,6 @@ import {
 const JobSection = ({ jobsData = null }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [savedJobs, setSavedJobs] = useState(new Set());
-  const [filteredJobs, setFilteredJobs] = useState([]);
 
   // Mock data for development - replace with actual API data
   const mockJobs = {
@@ -94,16 +93,17 @@ const JobSection = ({ jobsData = null }) => {
   // Use provided data or fallback to mock data
   const jobs = jobsData || mockJobs;
 
-  useEffect(() => {
-    if (jobs?.results) {
-      const filtered = jobs.results.filter(job =>
-        job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.company.display_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.location.display_name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredJobs(filtered);
-    }
-  }, [jobs, searchQuery]);
+  const filteredJobs = useMemo(() => {
+  if (!jobs?.results) return [];
+  const query = searchQuery.toLowerCase();
+
+  return jobs.results.filter(job =>
+    job.title.toLowerCase().includes(query) ||
+    job.company.display_name.toLowerCase().includes(query) ||
+    job.location.display_name.toLowerCase().includes(query)
+  );
+}, [jobs, searchQuery]);
+
 
   const toggleSaveJob = (jobId) => {
     const newSavedJobs = new Set(savedJobs);

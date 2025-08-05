@@ -153,10 +153,10 @@ const AIAgentSection = ({ initialMessages = null }) => {
             </div>
             <div>
               <h3 className="font-medium text-gray-900">Career Assistant</h3>
-              <p className="text-xs text-green-600 flex items-center">
+              <div className="text-xs text-green-600 flex items-center">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
                 Online
-              </p>
+              </div>
             </div>
           </div>
           <MessageCircle className="w-5 h-5 text-gray-400" />

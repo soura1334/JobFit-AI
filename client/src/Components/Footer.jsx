@@ -99,8 +99,10 @@ const Footer = () => {
                             viewport={{ once: true }}
                         >
                             {/* Logo */}
-                            <Link to="/" className="flex items-center">
-                                <img src="logo.png" alt="logo" className="h-10" />
+                            <Link to="/" className="flex items-center mb-6">
+                                <div className="w-fit h-fit p-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                    <img src="logo.png" alt="logo" className="h-10" />
+                                </div>
                                 <span className="ml-2 text-2xl font-bold tracking-tight">
                                     <span className="bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">
                                         JobFit
