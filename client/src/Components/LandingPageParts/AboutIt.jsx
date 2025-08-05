@@ -112,10 +112,10 @@ const AboutIt = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <h1 className="text-5xl font-bold text-gray-800 mb-4">
+                 <h1 className="text-5xl font-bold mb-4" style={{color:"blue" }} >
                         How It Works
                     </h1>
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                    <p className="text-xl text-pink-400 max-w-2xl mx-auto">
                         Simple steps to identify and bridge your skill gaps
                     </p>
                 </motion.div>
@@ -191,7 +191,7 @@ const AboutIt = () => {
                     transition={{ delay: 1.5, duration: 0.8 }}
                 >
                     <h2 className="text-4xl font-bold text-gray-800 mb-4">
-                        Why Choose SkillGap Analyzer?
+                        Why Choose SkillGap Analyzer <span className='text-orange-700 italic text-5xl'>?</span>
                     </h2>
                 </motion.div>
 
@@ -271,7 +271,7 @@ const AboutIt = () => {
                     >
                         Get Started Today
                     </motion.button>
-                    <p className="text-gray-600 mt-4">
+                    <p className="text-gray-600 mt-4 italic">
                         Join thousands of driven professionals transforming their futures.
                     </p>
                 </motion.div>
