@@ -60,15 +60,11 @@ const Hero = () => {
 
       {/* Mobile Background Image */}
       <div className="absolute inset-0 lg:hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/90 via-purple-600/90 to-purple-700/90 z-10"></div>
-        <img
-          src="https://www.bing.com/ck/a?!&&p=1a715c59cf6f93d840a8677a293a4941297be0a28e05f8fcff3fd162074cfacaJmltdHM9MTc1NDA5MjgwMA&ptn=3&ver=2&hsh=4&fclid=1516214c-864b-691f-01ce-34fb87a3688c&u=a1L2ltYWdlcy9zZWFyY2g_cT1oZXJvK2ltYWdlK29mK2ErcHJvZmVzc2lvbmFsK3N0dWRlbnQrcG5nJmlkPUQzQTMyN0Y3QUJCNDA3NjNGOEY2ODFGOUFEQTE3NkM0N0Y0Q0Y3MDcmRk9STT1JQUNGSVI&ntb=1"
-          alt="Hero Image"
-          className="w-full h-full object-cover opacity-30"
-        />
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/55 via-purple-600/55 to-purple-700/55 z-10"></div>
+        <img src="https://images.unsplash.com/photo-1491308056676-205b7c9a7dc1?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Hero Image" className="w-full h-full object-fit opacity-0% z-20"/>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 opacity:90%">
         <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
           
           {/* Left Content */}
@@ -137,13 +133,11 @@ const Hero = () => {
               {/* Main Hero Image */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="https://www.bing.com/ck/a?!&&p=1a715c59cf6f93d840a8677a293a4941297be0a28e05f8fcff3fd162074cfacaJmltdHM9MTc1NDA5MjgwMA&ptn=3&ver=2&hsh=4&fclid=1516214c-864b-691f-01ce-34fb87a3688c&u=a1L2ltYWdlcy9zZWFyY2g_cT1oZXJvK2ltYWdlK29mK2ErcHJvZmVzc2lvbmFsK3N0dWRlbnQrcG5nJmlkPUQzQTMyN0Y3QUJCNDA3NjNGOEY2ODFGOUFEQTE3NkM0N0Y0Q0Y3MDcmRk9STT1JQUNGSVI&ntb=1"
+                  src="https://images.unsplash.com/photo-1491308056676-205b7c9a7dc1?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                   alt="Hero Image"
                   className="w-full h-[500px] object-cover"
                 />
                 
-                {/* Overlay with glassmorphism effect */}
-                <div className="absolute inset-0 bg-gradient-to-t from-purple-900/30 via-transparent to-transparent"></div>
                 
                 
 
@@ -163,8 +157,8 @@ const Hero = () => {
               </div>
 
               {/* Decorative elements around the image */}
-              <div className="absolute -top-4 -left-4 w-20 h-20 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full opacity-20 blur-xl"></div>
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full opacity-20 blur-2xl"></div>
+              <div className="absolute -top-4 -left-4 w-20 h-20 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full opacity-20% blur-xl"></div>
+              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full opacity-20% blur-2xl"></div>
             </motion.div>
           </motion.div>
         </div>
