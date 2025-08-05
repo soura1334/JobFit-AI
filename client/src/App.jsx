@@ -11,7 +11,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route index element={<Navigate to="/home" replace />} />
+        <Route index element={<Navigate to="/home" replace />} />
         <Route path="/home" element={<LandingPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
