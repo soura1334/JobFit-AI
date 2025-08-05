@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "motion/react";
+import { Link } from 'react-router-dom';
 import {
   BarChart3,
   Briefcase,
   Target,
   Bot,
   User,
-  Settings,
-  Bell,
+  // Bell,
   Search,
   Menu,
   X,
@@ -30,7 +30,6 @@ const Dashboard = () => {
     { id: 'roadmap', name: 'Learning Roadmap', icon: Target },
     { id: 'ai-assistant', name: 'AI Assistant', icon: Bot },
     { id: 'profile', name: 'Profile', icon: User },
-    { id: 'settings', name: 'Settings', icon: Settings }
   ];
 
 
@@ -56,9 +55,9 @@ const Dashboard = () => {
         </div>
       </motion.div>
 
-<JobSection/>
-<RoadmapSection/>
-<AIAgentSection/>
+      <JobSection />
+      <RoadmapSection />
+      <AIAgentSection />
 
 
     </div>
@@ -72,21 +71,21 @@ const Dashboard = () => {
         // return <JobSection />;
         return (
           <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
-           <JobSection/>
+            <JobSection />
           </div>
         );
       case 'roadmap':
         // return <RoadmapSection />;
         return (
           <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
-<RoadmapSection/>
+            <RoadmapSection />
           </div>
         );
       case 'ai-assistant':
         // return <AIAgentSection />;
         return (
           <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
-                <AIAgentSection />
+            <AIAgentSection />
           </div>
         );
       case 'profile':
@@ -94,13 +93,6 @@ const Dashboard = () => {
           <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
             <h2 className="text-2xl font-bold mb-4">Profile Settings</h2>
             <p className="text-gray-600">Profile management component will be rendered here</p>
-          </div>
-        );
-      case 'settings':
-        return (
-          <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
-            <h2 className="text-2xl font-bold mb-4">Settings</h2>
-            <p className="text-gray-600">Settings component will be rendered here</p>
           </div>
         );
       default:
@@ -123,16 +115,16 @@ const Dashboard = () => {
                 <Menu className="w-5 h-5" />
               </button>
               <div className="flex items-center ml-2 md:ml-0">
-                <div className="w-fit h-fit p-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">LOGO</span>
-              </div>
-                <span className="ml-2 text-xl font-bold">
-                  <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-                    JobFit
+                <Link to="/" className="flex items-center">
+                  <img src="logo.png" alt="logo" className="h-10" />
+                  <span className="ml-2 text-xl font-bold">
+                    <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+                      JobFit
+                    </span>
+                    <span className="text-purple-500">AI</span>
+                    <Sparkles className="w-3 h-3 inline-block mb-4 text-purple-500" />
                   </span>
-                  <span className="text-purple-500">AI</span>
-                  <Sparkles className="w-3 h-3 inline-block mb-4 text-purple-500" />
-                </span>
+                </Link>
               </div>
             </div>
 
@@ -171,11 +163,10 @@ const Dashboard = () => {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                    activeTab === item.id
-                      ? 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-600 border border-blue-200'
-                      : 'text-gray-700 hover:bg-gray-50'
-                  }`}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${activeTab === item.id
+                    ? 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-600 border border-blue-200'
+                    : 'text-gray-700 hover:bg-gray-50'
+                    }`}
                 >
                   <item.icon className={`w-5 h-5 ${activeTab === item.id ? 'text-blue-600' : 'text-gray-500'}`} />
                   <span className="font-medium">{item.name}</span>
@@ -230,11 +221,10 @@ const Dashboard = () => {
                           setActiveTab(item.id);
                           setSidebarOpen(false);
                         }}
-                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                          activeTab === item.id
-                            ? 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-600 border border-blue-200'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
+                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${activeTab === item.id
+                          ? 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-600 border border-blue-200'
+                          : 'text-gray-700 hover:bg-gray-50'
+                          }`}
                       >
                         <item.icon className={`w-5 h-5 ${activeTab === item.id ? 'text-blue-600' : 'text-gray-500'}`} />
                         <span className="font-medium">{item.name}</span>

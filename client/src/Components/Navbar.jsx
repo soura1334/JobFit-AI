@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { Menu, X, ChevronDown, ChevronRight,Sparkles  } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronRight, Sparkles } from 'lucide-react';
+import { useAuth } from '../Context/AuthContext';
+
 
 // Create MotionLink component
-const MotionLink = motion(Link);
+const MotionLink = motion(NavLink);
 
-// LogoutButton component (placeholder)
-const LogoutButton = () => (
-  <motion.button whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="bg-gradient-to-br from-rose-400 via-pink-600 to-red-600 text-white px-6 py-2 md:rounded-lg md:font-medium shadow-lg hover:shadow-xl transition-shadow inline-block w-full text-center md:w-auto md:inline font-semibold text-lg rounded-xl md:text-base cursor-pointer" onClick={() => console.log('Logout')}>
-    Logout
-  </motion.button>
-);
+const Navbar = () => { 
+  const { isLoggedIn, logout } = useAuth();
 
-const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
 
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -31,7 +26,7 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
   }, []);
 
   const navItems = [
-    { name: "Home", path: "/home" },
+    { name: "Home", path: "/" },
     { name: "About", path: "/about" },
     {
       name: "Services",
@@ -64,6 +59,15 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
     return <LogoutButton />;
   };
 
+  // LogoutButton component (placeholder)
+const LogoutButton = () => (
+  <motion.button whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    className="bg-gradient-to-br from-rose-400 via-pink-600 to-red-600 text-white px-6 py-2 md:rounded-lg md:font-medium shadow-lg hover:shadow-xl transition-shadow inline-block w-full text-center md:w-auto md:inline font-semibold text-lg rounded-xl md:text-base cursor-pointer" onClick={logout}>
+    Logout
+  </motion.button>
+);
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -82,14 +86,16 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
             <Link to="/" className="flex items-center">
               <img src="logo.png" alt="logo" className="h-10" />
               <span
-                className={`ml-2 text-2xl font-bold transition-colors tracking-tight ${
-                  isScrolled ? "text-gray-900" : "text-sky-600"
-                }`}
+                className={`ml-2 text-2xl font-bold transition-colors tracking-tight ${isScrolled ? "text-gray-900" : "text-sky-600"
+                  }`}
               >
                 <span className="bg-gradient-to-r from-sky-500 to-indigo-600 bg-clip-text text-transparent">
                   JobFit
                 </span>
-                 <span className="ml-1 text-2xl font-bold text-purple-500">AI<Sparkles className='w-3 h-3 inline-block mb-5' /></span>
+                <span className="ml-1 text-2xl font-bold text-purple-500">
+                  AI
+                  <Sparkles className="w-3 h-3 inline-block mb-5" />
+                </span>
               </span>
             </Link>
           </motion.div>
@@ -106,8 +112,13 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
                       item.dropdown && setActiveDropdown(index)
                     }
                     onMouseLeave={() => setActiveDropdown(null)}
-                    className={`px-4 py-2 rounded-lg text-base font-medium transition-all duration-200 flex items-center hover:font-bold  text-slate-700 hover:text-indigo-600 
-                      `}
+                    className={({ isActive }) =>
+                      `${
+                        isActive
+                          ? "text-indigo-600 font-bold"
+                          : "text-slate-700"
+                      } px-4 py-2 rounded-lg text-base font-medium transition-all duration-200 flex items-center hover:font-bold hover:text-indigo-600`
+                    }
                   >
                     {item.name}
                     {item.dropdown && (
@@ -155,11 +166,10 @@ const Navbar = ({ isLoggedIn = true }) => { // Accept as prop
               whileTap={{ scale: 0.95 }}
               onClick={toggleMobile}
               aria-label="Toggle mobile menu"
-              className={`p-2 rounded-lg transition-colors ${
-                isScrolled
+              className={`p-2 rounded-lg transition-colors ${isScrolled
                   ? "text-gray-700 hover:bg-violet-50"
                   : "text-slate-500 hover:bg-white/10"
-              }`}
+                }`}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </motion.button>
