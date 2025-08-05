@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { Link } from "react-router-dom";
-import { motion } from "motion/react";
-import { Eye, EyeOff, User, Mail, Lock, ArrowRight } from 'lucide-react';
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Eye, EyeOff, User, Mail, Lock, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
+import { AuthContext } from '../Context/AuthContext';
 
 const Register = () => {
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+  
   // Create MotionLink component with animations
   const MotionLink = motion(Link);
 
@@ -14,20 +18,145 @@ const Register = () => {
     password: '',
     confirmPassword: ''
   });
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [focusedField, setFocusedField] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
 
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const validateField = (name, value) => {
+    const errors = { ...fieldErrors };
+
+    switch (name) {
+      case 'firstName':
+      case 'lastName':
+        if (!value.trim()) {
+          errors[name] = `${name === 'firstName' ? 'First' : 'Last'} name is required`;
+        } else if (value.length < 2) {
+          errors[name] = `${name === 'firstName' ? 'First' : 'Last'} name must be at least 2 characters`;
+        } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+          errors[name] = `${name === 'firstName' ? 'First' : 'Last'} name can only contain letters`;
+        } else {
+          delete errors[name];
+        }
+        break;
+      
+      case 'email':
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!value.trim()) {
+          errors[name] = 'Email is required';
+        } else if (!emailRegex.test(value)) {
+          errors[name] = 'Please enter a valid email address';
+        } else {
+          delete errors[name];
+        }
+        break;
+      
+      case 'password':
+        if (!value) {
+          errors[name] = 'Password is required';
+        } else if (value.length < 8) {
+          errors[name] = 'Password must be at least 8 characters';
+        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])/.test(value)) {
+          errors[name] = 'Password must contain uppercase, lowercase, number, and special character';
+        } else {
+          delete errors[name];
+        }
+        break;
+      
+      case 'confirmPassword':
+        if (!value) {
+          errors[name] = 'Please confirm your password';
+        } else if (value !== formData.password) {
+          errors[name] = 'Passwords do not match';
+        } else {
+          delete errors[name];
+        }
+        break;
+      
+      default:
+        break;
+    }
+
+    setFieldErrors(errors);
   };
 
-  const handleSubmit = (e) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear general error when user starts typing
+    if (error) setError('');
+    
+    // Validate field in real-time
+    validateField(name, value);
+    
+    // Re-validate confirm password when password changes
+    if (name === 'password' && formData.confirmPassword) {
+      validateField('confirmPassword', formData.confirmPassword);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    // Validate all fields before submission
+    Object.keys(formData).forEach(key => {
+      validateField(key, formData[key]);
+    });
+
+    // Check if there are any validation errors
+    if (Object.keys(fieldErrors).length > 0) {
+      setError('Please fix all validation errors before submitting');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess('Registration successful! Redirecting...');
+        
+        // Use the auth context to log the user in
+        login(data.access_token, data.user);
+        
+        // Redirect after a brief delay to show success message
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1234);
+      } else {
+        setError(data.error || 'Registration failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      setError('Network error. Please check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getFieldBorderColor = (fieldName) => {
+    if (fieldErrors[fieldName]) return 'border-red-300 focus:ring-red-500 focus:border-red-500';
+    if (formData[fieldName] && !fieldErrors[fieldName]) return 'border-green-300 focus:ring-green-500 focus:border-green-500';
+    return 'border-gray-200 focus:ring-indigo-500 focus:border-transparent';
   };
 
   return (
@@ -55,6 +184,31 @@ const Register = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
           <p className="text-gray-600">Join us and start your journey today</p>
         </motion.div>
+
+        {/* Alert Messages */}
+        {error && (
+          <motion.div
+            className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <AlertCircle className="w-5 h-5 text-red-500 mr-3 flex-shrink-0" />
+            <p className="text-red-700 text-sm">{error}</p>
+          </motion.div>
+        )}
+
+        {success && (
+          <motion.div
+            className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <CheckCircle className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
+            <p className="text-green-700 text-sm">{success}</p>
+          </motion.div>
+        )}
 
         {/* Form */}
         <motion.div
@@ -84,13 +238,17 @@ const Register = () => {
                     onChange={handleInputChange}
                     onFocus={() => setFocusedField('firstName')}
                     onBlur={() => setFocusedField('')}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 shadow-sm"
+                    className={`w-full pl-10 pr-4 py-3 border rounded-xl transition-all duration-200 bg-white/50 shadow-sm ${getFieldBorderColor('firstName')}`}
                     placeholder="First name"
                     required
+                    disabled={loading}
                     whileFocus={{ scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   />
                 </div>
+                {fieldErrors.firstName && (
+                  <p className="mt-1 text-xs text-red-600">{fieldErrors.firstName}</p>
+                )}
               </motion.div>
 
               {/* Last Name */}
@@ -111,13 +269,17 @@ const Register = () => {
                     onChange={handleInputChange}
                     onFocus={() => setFocusedField('lastName')}
                     onBlur={() => setFocusedField('')}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 shadow-sm"
+                    className={`w-full pl-10 pr-4 py-3 border rounded-xl transition-all duration-200 bg-white/50 shadow-sm ${getFieldBorderColor('lastName')}`}
                     placeholder="Last name"
                     required
+                    disabled={loading}
                     whileFocus={{ scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   />
                 </div>
+                {fieldErrors.lastName && (
+                  <p className="mt-1 text-xs text-red-600">{fieldErrors.lastName}</p>
+                )}
               </motion.div>
             </div>
 
@@ -140,13 +302,17 @@ const Register = () => {
                   onChange={handleInputChange}
                   onFocus={() => setFocusedField('email')}
                   onBlur={() => setFocusedField('')}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 shadow-sm"
+                  className={`w-full pl-10 pr-4 py-3 border rounded-xl transition-all duration-200 bg-white/50 shadow-sm ${getFieldBorderColor('email')}`}
                   placeholder="Enter your email"
                   required
+                  disabled={loading}
                   whileFocus={{ scale: 1.02 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 />
               </div>
+              {fieldErrors.email && (
+                <p className="mt-1 text-xs text-red-600">{fieldErrors.email}</p>
+              )}
             </motion.div>
 
             {/* Password Field */}
@@ -168,9 +334,10 @@ const Register = () => {
                   onChange={handleInputChange}
                   onFocus={() => setFocusedField('password')}
                   onBlur={() => setFocusedField('')}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 shadow-sm"
+                  className={`w-full pl-10 pr-12 py-3 border rounded-xl transition-all duration-200 bg-white/50 shadow-sm ${getFieldBorderColor('password')}`}
                   placeholder="Create a password"
                   required
+                  disabled={loading}
                   whileFocus={{ scale: 1.02 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 />
@@ -180,10 +347,14 @@ const Register = () => {
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
+                  disabled={loading}
                 >
                   {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
                 </motion.button>
               </div>
+              {fieldErrors.password && (
+                <p className="mt-1 text-xs text-red-600">{fieldErrors.password}</p>
+              )}
             </motion.div>
 
             {/* Confirm Password Field */}
@@ -205,9 +376,10 @@ const Register = () => {
                   onChange={handleInputChange}
                   onFocus={() => setFocusedField('confirmPassword')}
                   onBlur={() => setFocusedField('')}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 shadow-sm"
+                  className={`w-full pl-10 pr-12 py-3 border rounded-xl transition-all duration-200 bg-white/50 shadow-sm ${getFieldBorderColor('confirmPassword')}`}
                   placeholder="Confirm your password"
                   required
+                  disabled={loading}
                   whileFocus={{ scale: 1.02 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 />
@@ -217,37 +389,53 @@ const Register = () => {
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
+                  disabled={loading}
                 >
                   {showConfirmPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
                 </motion.button>
               </div>
+              {fieldErrors.confirmPassword && (
+                <p className="mt-1 text-xs text-red-600">{fieldErrors.confirmPassword}</p>
+              )}
             </motion.div>
 
             {/* Submit Button */}
             <motion.button
               type="submit"
-              className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 px-6 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center group cursor-pointer"
-              whileHover={{ scale: 1.02, y: -2 }}
-              whileTap={{ scale: 0.98 }}
+              disabled={loading || Object.keys(fieldErrors).length > 0}
+              className={`w-full py-3 px-6 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center group ${
+                loading || Object.keys(fieldErrors).length > 0
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700'
+              }`}
+              whileHover={loading ? {} : { scale: 1.02, y: -2 }}
+              whileTap={loading ? {} : { scale: 0.98 }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.7 }}
             >
-              Create Account
-              <motion.div
-                className="ml-2"
-                animate={{ x: 0 }}
-                whileHover={{ x: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <motion.div
-                  className="ml-2"
-                  animate={{ x: [0, 4, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <ArrowRight className="w-5 h-5" />
-                </motion.div>
-              </motion.div>
+              {loading ? (
+                <>
+                  <motion.div
+                    className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                  Creating Account.... .
+                </>
+              ) : (
+                <>
+                  Create Account
+                  <motion.div
+                    className="ml-2"
+                    animate={{ x: 0 }}
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <ArrowRight className="w-5 h-5" />
+                  </motion.div>
+                </>
+              )}
             </motion.button>
           </form>
 
@@ -298,6 +486,6 @@ const Register = () => {
       </motion.div>
     </div>
   );
-}
+};
 
 export default Register;
