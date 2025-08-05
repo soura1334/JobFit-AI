@@ -20,22 +20,22 @@ const Footer = () => {
     const [isVisible, setIsVisible] = useState(false);
 
     // Control button visibility based on scroll position
-  useEffect(() => {
-    const toggleVisibility = () => {
-      // Show button when page is scrolled down 300px (you can adjust this value)
-      if (window.pageYOffset > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
+    useEffect(() => {
+        const toggleVisibility = () => {
+            // Show button when page is scrolled down 300px (you can adjust this value)
+            if (window.pageYOffset > 300) {
+                setIsVisible(true);
+            } else {
+                setIsVisible(false);
+            }
+        };
 
-    window.addEventListener('scroll', toggleVisibility);
+        window.addEventListener('scroll', toggleVisibility);
 
-    return () => {
-      window.removeEventListener('scroll', toggleVisibility);
-    };
-  }, []);
+        return () => {
+            window.removeEventListener('scroll', toggleVisibility);
+        };
+    }, []);
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -268,17 +268,17 @@ const Footer = () => {
 
             {/* Scroll to Top Button */}
             <AnimatePresence>
-      {isVisible && (
-            <motion.button
-                onClick={scrollToTop}
-                whileHover={{ scale: 1.1, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                className="fixed bottom-10 right-8 w-12 h-12 bg-gradient-to-r from-blue-500/90 to-purple-600/80 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow cursor-pointer "
-                aria-label="Scroll to top"
-            >
-                <ArrowUp size={20} />
-            </motion.button>
-        )}
+                {isVisible && (
+                    <motion.button
+                        onClick={scrollToTop}
+                        whileHover={{ scale: 1.1, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="fixed bottom-10 right-8 w-12 h-12 bg-gradient-to-r from-blue-500/90 to-purple-600/80 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow cursor-pointer "
+                        aria-label="Scroll to top"
+                    >
+                        <ArrowUp size={20} />
+                    </motion.button>
+                )}
             </AnimatePresence>
         </footer>
     );

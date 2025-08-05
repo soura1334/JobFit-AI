@@ -1,25 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { Menu, X, ChevronDown, ChevronRight, Sparkles } from "lucide-react";
+import { Menu, X, ChevronDown, ChevronRight, Sparkles } from 'lucide-react';
+import { useAuth } from '../Context/AuthContext';
+
 
 // Create MotionLink component
 const MotionLink = motion(NavLink);
 
-// LogoutButton component (placeholder)
-const LogoutButton = () => (
-  <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    className="bg-gradient-to-br from-rose-400 via-pink-600 to-red-600 text-white px-6 py-2 md:rounded-lg md:font-medium shadow-lg hover:shadow-xl transition-shadow inline-block w-full text-center md:w-auto md:inline font-semibold text-lg rounded-xl md:text-base cursor-pointer"
-    onClick={() => console.log("Logout")}
-  >
-    Logout
-  </motion.button>
-);
+const Navbar = () => { 
+  const { isLoggedIn, logout } = useAuth();
 
-const Navbar = ({ isLoggedIn = true }) => {
-  // Accept as prop
 
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -35,7 +26,7 @@ const Navbar = ({ isLoggedIn = true }) => {
   }, []);
 
   const navItems = [
-    { name: "Home", path: "/home" },
+    { name: "Home", path: "/" },
     { name: "About", path: "/about" },
     {
       name: "Services",
@@ -68,6 +59,15 @@ const Navbar = ({ isLoggedIn = true }) => {
     return <LogoutButton />;
   };
 
+  // LogoutButton component (placeholder)
+const LogoutButton = () => (
+  <motion.button whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    className="bg-gradient-to-br from-rose-400 via-pink-600 to-red-600 text-white px-6 py-2 md:rounded-lg md:font-medium shadow-lg hover:shadow-xl transition-shadow inline-block w-full text-center md:w-auto md:inline font-semibold text-lg rounded-xl md:text-base cursor-pointer" onClick={logout}>
+    Logout
+  </motion.button>
+);
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -86,9 +86,8 @@ const Navbar = ({ isLoggedIn = true }) => {
             <Link to="/" className="flex items-center">
               <img src="logo.png" alt="logo" className="h-10" />
               <span
-                className={`ml-2 text-2xl font-bold transition-colors tracking-tight ${
-                  isScrolled ? "text-gray-900" : "text-sky-600"
-                }`}
+                className={`ml-2 text-2xl font-bold transition-colors tracking-tight ${isScrolled ? "text-gray-900" : "text-sky-600"
+                  }`}
               >
                 <span className="bg-gradient-to-r from-sky-500 to-indigo-600 bg-clip-text text-transparent">
                   JobFit
@@ -167,11 +166,10 @@ const Navbar = ({ isLoggedIn = true }) => {
               whileTap={{ scale: 0.95 }}
               onClick={toggleMobile}
               aria-label="Toggle mobile menu"
-              className={`p-2 rounded-lg transition-colors ${
-                isScrolled
+              className={`p-2 rounded-lg transition-colors ${isScrolled
                   ? "text-gray-700 hover:bg-violet-50"
                   : "text-slate-500 hover:bg-white/10"
-              }`}
+                }`}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </motion.button>
