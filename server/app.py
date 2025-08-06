@@ -2,7 +2,12 @@ from flask import Flask, render_template, request, jsonify
 import requests
 import google.generativeai as genai
 import json
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    jwt_required,
+    get_jwt_identity,
+)
 from pymongo import MongoClient
 from werkzeug.utils import secure_filename
 import os
@@ -17,7 +22,7 @@ NEW_API_ID = "your-adzuna-app-id"
 
 # Google Generative AI config
 genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel("gemini-pro")
 
 # MongoDB setup
 client = MongoClient("mongodb://localhost:27017/")
@@ -25,22 +30,24 @@ db = client["jobfit_ai"]
 collection = db["users"]
 
 # JWT setup
-app.config['JWT_SECRET_KEY'] = 'your-secret-key'
+app.config["JWT_SECRET_KEY"] = "your-secret-key"
 jwt = JWTManager(app)
 
+
 # Home Route
-@app.route('/')
+@app.route("/")
 def home():
     p = job_listing("Frontend Developer")
     return jsonify(p)
 
+
 # Prompt route (demo)
-@app.route('/getJobs')
+@app.route("/getJobs")
 def read():
     prompt = "enter your query here"
     return f"The prompt is: {prompt}"
 
-@app.route('/skills', methods=['GET'])
+@app.route("/skills", methods=["GET"])
 @jwt_required()
 def skills():
     email = get_jwt_identity()
@@ -79,19 +86,50 @@ Only return the JSON list — no explanation.
     try:
         response = model.generate_content(prompt)
         skills_suggestion = response.text.strip()
-        return jsonify({"skills": skills_suggestion}), 200
+
+        # Use the generated skills to create roadmap
+        roadmap_text = generate_roadmap(skills_suggestion)
+
+        return jsonify({
+            "skills": json.loads(skills_suggestion),  # safely parse JSON list
+            "roadmap": roadmap_text
+        }), 200
 
     except Exception as e:
         print("Error:", e)
         return jsonify({"msg": "Failed to generate skills", "error": str(e)}), 500
 
 
-@app.route('/updateProfile', methods=['POST'])
+def generate_roadmap(skills_list_json):
+    prompt = f"""
+You are an expert planner.
+
+I want you to create a 30-day learning roadmap to efficiently acquire the following skills:
+skills: {skills_list_json}
+
+Give me a clear day-by-day plan in JSON format:
+{{
+  "Day 1": "Learn basics of Python",
+  "Day 2": "Work on variables and data types in Python",
+  ...
+}}
+Only return JSON.
+"""
+    try:
+        response = model.generate_content(prompt)
+        return json.loads(response.text.strip())
+
+    except Exception as e:
+        print("Error:", e)
+        return {"error": "Failed to generate roadmap"}
+    
+
+@app.route("/updateProfile", methods=["POST"])
 @jwt_required()
 def update_profile():
     email = get_jwt_identity()
     user = collection.find_one({"email": email})
-    
+
     if not user:
         return jsonify({"msg": "User not found"}), 404
 
@@ -99,11 +137,11 @@ def update_profile():
     if not job_role:
         return jsonify({"msg": "Job role is required"}), 400
 
-    if 'resume' not in request.files:
+    if "resume" not in request.files:
         return jsonify({"msg": "Resume file is missing"}), 400
 
-    file = request.files['resume']
-    if file.filename == '' or not file.filename.endswith('.pdf'):
+    file = request.files["resume"]
+    if file.filename == "" or not file.filename.endswith(".pdf"):
         return jsonify({"msg": "Valid PDF file is required"}), 400
 
     try:
@@ -121,11 +159,7 @@ def update_profile():
 
     # ✅ Update MongoDB directly
     collection.update_one(
-        {"email": email},
-        {"$set": {
-            "resume_text": text,
-            "job_role": job_role
-        }}
+        {"email": email}, {"$set": {"resume_text": text, "job_role": job_role}}
     )
 
     return jsonify({"msg": "Profile updated with resume text and job role"}), 200
@@ -141,8 +175,9 @@ def job_listing(keyword):
     else:
         return {"error": "Failed to fetch jobs"}
 
+
 # ✅ REGISTER Route (with name, email, password, phone)
-@app.route('/register', methods=['POST'])
+@app.route("/register", methods=["POST"])
 def register():
     data = request.get_json()
     name = data.get("name")
@@ -162,7 +197,7 @@ def register():
         "email": email,
         "password": password,
         "phone": phone,
-        "resume": ""  # As you mentioned before, add empty resume field
+        "resume": "",  # As you mentioned before, add empty resume field
     }
 
     collection.insert_one(user_data)
@@ -170,8 +205,9 @@ def register():
     access_token = create_access_token(identity=email)
     return jsonify({"msg": "User created", "token": access_token}), 201
 
+
 # ✅ LOGIN Route (returning token)
-@app.route('/login', methods=['POST'])
+@app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
     email = data.get("email")
@@ -183,5 +219,6 @@ def login():
         return jsonify({"msg": "Login successful", "token": access_token}), 200
     return jsonify({"msg": "Invalid credentials"}), 401
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(debug=True)
