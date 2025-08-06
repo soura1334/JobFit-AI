@@ -24,7 +24,9 @@ export default function Mission() {
 
 function HeroImage() {
   return (
-    <div className="bg-gradient-to-r from-pink-500 to-red-500 rounded-lg text-white">Add an image from the site</div>
+    <div className="flex items-center">
+      <img src="/dashboard.png" className="shadow-2xl rounded-lg"></img>
+    </div>
   );
 }
 
