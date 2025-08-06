@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from "motion/react";
+import { useNavigate } from 'react-router-dom';
 import { Upload, Target, BookOpen, Zap, Users, TrendingUp, Calendar, Gift } from 'lucide-react';
 
 const AboutIt = () => {
     const [visibleCards, setVisibleCards] = useState([]);
+    const navigate = useNavigate();
+
+    const handleClickToDashboard = () => {
+        navigate('/dashboard');
+    };
 
     useEffect(() => {
         // Stagger the appearance of cards
@@ -112,7 +118,7 @@ const AboutIt = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                 >
-                 <h1 className="text-5xl font-bold mb-4" style={{color:"blue" }} >
+                    <h1 className="text-5xl font-bold mb-4" style={{ color: "blue" }} >
                         How It Works
                     </h1>
                     <p className="text-xl text-pink-400 max-w-2xl mx-auto">
@@ -262,6 +268,7 @@ const AboutIt = () => {
                         Ready to Elevate Your Career?
                     </h2>
                     <motion.button
+                        onClick={handleClickToDashboard}
                         className="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-12 py-4 rounded-full text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                         whileHover={{
                             scale: 1.05,

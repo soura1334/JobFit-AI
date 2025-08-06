@@ -5,7 +5,7 @@ import {
     ChevronRight,
     Mail,
     Phone,
-    MapPin,
+    MapPinned,
     Sparkles,
     Facebook,
     Twitter,
@@ -14,8 +14,12 @@ import {
     ArrowUp
 } from 'lucide-react';
 
-// Create MotionLink component
+// Create MotionLink component for internal navigation
 const MotionLink = motion(Link);
+
+// Create MotionA component for external links
+const MotionA = motion.a;
+
 const Footer = () => {
     const [isVisible, setIsVisible] = useState(false);
 
@@ -74,9 +78,13 @@ const Footer = () => {
     ];
 
     const contactInfo = [
-        { icon: Mail, text: 'hello@jobfitai.com', href: 'mailto:hello@jobfitai.com' },
-        { icon: Phone, text: '+91 1231234567', href: 'tel:+91 1231234567' },
-        { icon: MapPin, text: 'Kalyani, West Bengal, India', href: '#' }
+        { icon: Mail, text: 'jobfitai@gmail.com', href: 'mailto:jobfitai@gmail.com' },
+        { icon: Phone, text: '+91 1800-123-4567', href: 'tel:+911800123456' },
+        {
+            icon: MapPinned, 
+            text: 'Kalyani, West Bengal, India 741235', 
+            href: "https://maps.app.goo.gl/PqRhSqFXPsNuJsxf8"
+        }
     ];
 
     return (
@@ -118,16 +126,18 @@ const Footer = () => {
                             {/* Social Links */}
                             <div className="flex space-x-4 justify-evenly">
                                 {socialLinks.map((social, index) => (
-                                    <MotionLink
+                                    <MotionA
                                         key={social.label}
                                         href={social.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         whileHover={{ scale: 1.1, y: -2 }}
                                         whileTap={{ scale: 0.95 }}
                                         className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center  hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 transition-all duration-300"
                                         aria-label={social.label}
                                     >
                                         <social.icon size={18} />
-                                    </MotionLink>
+                                    </MotionA>
                                 ))}
                             </div>
                         </motion.div>
@@ -218,20 +228,21 @@ const Footer = () => {
                             {/* Contact Info */}
                             <div className="space-y-3">
                                 {contactInfo.map((contact, index) => (
-                                    <MotionLink
+                                    <MotionA
                                         key={index}
                                         href={contact.href}
+                                        target={contact.href.startsWith('http') ? '_blank' : '_self'}
+                                        rel={contact.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                                         whileHover={{ x: 4 }}
                                         className="flex items-center text-gray-300 hover:text-white transition-colors duration-200"
                                     >
-                                        <contact.icon className="w-4 h-4 mr-3 text-blue-400" />
+                                        <contact.icon className="w-6 h-6 mr-3 text-blue-400" />
                                         {contact.text}
-                                    </MotionLink>
+                                    </MotionA>
                                 ))}
                             </div>
                         </motion.div>
                     </div>
-
 
                 </div>
 

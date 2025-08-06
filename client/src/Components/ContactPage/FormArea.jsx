@@ -115,7 +115,7 @@ function FormContent() {
           <label htmlFor="name" className="font-semibold">
             Your Name
           </label>
-          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 gap-2 focus-within:ring-2 focus-within:ring-indigo-500">
+          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 gap-2 focus-within:ring-2 focus-within:ring-indigo-500 shadow-sm">
             <User color="#9ca3af" size={20} />
             <input
               name="name"
@@ -133,7 +133,7 @@ function FormContent() {
           <label htmlFor="email" className="font-semibold">
             Your Email
           </label>
-          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 gap-2 focus-within:ring-2 focus-within:ring-indigo-500">
+          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 gap-2 focus-within:ring-2 focus-within:ring-indigo-500 shadow-sm">
             <AtSign color="#9ca3af" size={20} />
             <input
               name="email"
@@ -150,7 +150,7 @@ function FormContent() {
           <label htmlFor="subject" className="font-semibold">
             Subject
           </label>
-          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 gap-2 focus-within:ring-2 focus-within:ring-indigo-500 w-full overflow-hidden">
+          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 gap-2 focus-within:ring-2 focus-within:ring-indigo-500 shadow-sm w-full overflow-hidden">
             <MessageSquare color="#9ca3af" size={20} />
             <select
               id="subject"
@@ -171,7 +171,7 @@ function FormContent() {
           <label htmlFor="message" className="font-semibold">
             Your Message
           </label>
-          <div className="border border-gray-300 rounded-md px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500">
+          <div className="border border-gray-300 rounded-md px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500 shadow-sm">
             <textarea
               id="message"
               name="message"

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, ChevronDown, ChevronRight, Sparkles } from 'lucide-react';
-import { useAuth } from '../Context/AuthContext';
-
+import { useAuth } from '../hook/auth';
 
 // Create MotionLink component
 const MotionLink = motion(NavLink);
