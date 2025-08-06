@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 
 export default function HeroAbout() {
   return (
-    <div className="min-h-[80vh] bg-gradient-to-br from-indigo-600 via-purple-600 to-purple-700 flex items-center px-10">
+    <div className="min-h-[80vh] mt-1.5 bg-gradient-to-br from-indigo-600 via-purple-600 to-purple-700 flex items-center px-10">
       <div className="lg:grid grid-cols-2 mt-20 lg:mt-5 flex flex-col gap-10">
         <div className="flex flex-col gap-5 items-center lg:items-start lg:justify-evenly lg:ml-10">
           <p className="text-white lg:text-5xl text-3xl font-bold text-center lg:text-start">

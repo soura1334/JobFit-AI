@@ -52,12 +52,12 @@ const Footer = () => {
             { name: 'Careers', path: '/careers' },
             { name: 'Press', path: '/press' }
         ],
-        services: [
-            { name: 'Progress Tracking', path: '/progress' },
-            { name: 'Skill Gap Analysis', path: '/skill-gap' },
-            { name: 'Recommendations', path: '/recommendations' },
-            { name: 'Career Insights', path: '/insights' }
-        ],
+        // services: [
+        //     { name: 'Progress Tracking', path: '/progress' },
+        //     { name: 'Skill Gap Analysis', path: '/skill-gap' },
+        //     { name: 'Recommendations', path: '/recommendations' },
+        //     { name: 'Career Insights', path: '/insights' }
+        // ],
         resources: [
             { name: 'Blog', path: '/blog' },
             { name: 'Help Center', path: '/help' }
@@ -144,7 +144,7 @@ const Footer = () => {
                     </div>
 
                     {/* Quick Links */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 lg:col-span-3 gap-3">
+                    <div className="grid grid-cols-3 lg:grid-cols-3 lg:col-span-3 gap-0 md:gap-4">
                         {/* Company Links */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -152,16 +152,16 @@ const Footer = () => {
                             transition={{ duration: 0.6, delay: 0.1 }}
                             viewport={{ once: true }}
                         >
-                            <h3 className="text-lg font-semibold mb-4 ml-0 md:ml-4 text-white">Company</h3>
+                            <h3 className="text-base md:text-lg font-semibold mb-4 ml-0 md:ml-2 text-white">Company</h3>
                             <ul className="space-y-2">
                                 {footerLinks.company.map((link) => (
                                     <li key={link.name}>
                                         <MotionLink
                                             to={link.path}
                                             whileHover={{ x: 4 }}
-                                            className="text-gray-300 hover:text-white transition-colors duration-200 flex items-center group"
+                                            className="text-gray-300 hover:text-white text-sm md:text-base transition-colors duration-200 flex items-start group"
                                         >
-                                            <ChevronRight className="w-4 h-4 mr-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            <ChevronRight className="md:w-4 w-3 md:h-4 h-3 mr-1 hidden group-hover:inline-block transition-all" />
                                             {link.name}
                                         </MotionLink>
                                     </li>
@@ -170,13 +170,13 @@ const Footer = () => {
                         </motion.div>
 
                         {/* Services Links */}
-                        <motion.div
+                        {/* <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
                             viewport={{ once: true }}
                         >
-                            <h3 className="text-lg font-semibold mb-4 ml-0 md:ml-8 text-white">Services</h3>
+                            <h3 className="text-lg font-semibold mb-4 ml-0 md:ml-2 text-white">Services</h3>
                             <ul className="space-y-2">
                                 {footerLinks.services.map((link) => (
                                     <li key={link.name}>
@@ -185,13 +185,13 @@ const Footer = () => {
                                             whileHover={{ x: 4 }}
                                             className="text-gray-300 hover:text-white transition-colors duration-200 flex items-center group"
                                         >
-                                            <ChevronRight className="w-4 h-4 mr-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            <ChevronRight className="md:w-4 w-3 md:h-4 h-3 mr-1 hidden group-hover:inline-block transition-all" />
                                             {link.name}
                                         </MotionLink>
                                     </li>
                                 ))}
                             </ul>
-                        </motion.div>
+                        </motion.div> */}
 
                         {/* Resources Links */}
                         <motion.div
@@ -200,16 +200,16 @@ const Footer = () => {
                             transition={{ duration: 0.6, delay: 0.3 }}
                             viewport={{ once: true }}
                         >
-                            <h3 className="text-lg font-semibold mb-4 ml-0 md:ml-8 text-white">Resources</h3>
+                            <h3 className="text-base md:text-lg  font-semibold mb-4 ml-0 md:ml-2 text-white">Resources</h3>
                             <ul className="space-y-2">
                                 {footerLinks.resources.map((link) => (
                                     <li key={link.name}>
                                         <MotionLink
                                             to={link.path}
                                             whileHover={{ x: 4 }}
-                                            className="text-gray-300 hover:text-white transition-colors duration-200 flex items-center group"
+                                            className="text-gray-300 hover:text-white text-sm md:text-base transition-colors duration-200 flex items-center group"
                                         >
-                                            <ChevronRight className="w-4 h-4 mr-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            <ChevronRight className="md:w-4 w-3 md:h-4 h-3 mr-1 hidden group-hover:inline-block transition-all" />
                                             {link.name}
                                         </MotionLink>
                                     </li>
@@ -224,7 +224,7 @@ const Footer = () => {
                             transition={{ duration: 0.6, delay: 0.4 }}
                             viewport={{ once: true }}
                         >
-                            <h3 className="text-lg font-semibold mb-4 ml-0 md:ml-2 text-white">Contact</h3>
+                            <h3 className="text-base md:text-lg font-semibold mb-4 ml-0 md:ml-2 text-white">Contact</h3>
                             {/* Contact Info */}
                             <div className="space-y-3">
                                 {contactInfo.map((contact, index) => (
@@ -234,10 +234,10 @@ const Footer = () => {
                                         target={contact.href.startsWith('http') ? '_blank' : '_self'}
                                         rel={contact.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                                         whileHover={{ x: 4 }}
-                                        className="flex items-center text-gray-300 hover:text-white transition-colors duration-200"
+                                        className="flex items-start text-gray-300 hover:text-white text-sm md:text-base transition-colors duration-200"
                                     >
-                                        <contact.icon className="w-6 h-6 mr-3 text-blue-400" />
-                                        {contact.text}
+                                        <contact.icon className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 mr-2 md:mr-3 mt-0.5 md:mt-0 text-blue-400 flex-shrink-0" />
+                                        <span className="break-words">{contact.text}</span>
                                     </MotionA>
                                 ))}
                             </div>
@@ -281,6 +281,9 @@ const Footer = () => {
             <AnimatePresence>
                 {isVisible && (
                     <motion.button
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0 }}
                         onClick={scrollToTop}
                         whileHover={{ scale: 1.1, y: -2 }}
                         whileTap={{ scale: 0.95 }}
