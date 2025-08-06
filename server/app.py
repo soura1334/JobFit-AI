@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 import requests
 import google.generativeai as genai
 import json
@@ -9,23 +10,28 @@ from flask_jwt_extended import (
     get_jwt_identity,
 )
 from pymongo import MongoClient
+from dotenv import load_dotenv
+from bson import ObjectId
 from werkzeug.utils import secure_filename
 import os
 import fitz
 
+load_dotenv()
+
 app = Flask(__name__)
+CORS(app)
 
 # Replace with actual keys
-GOOGLE_API_KEY = "your-google-api-key"
-NEW_API_KEY = "your-adzuna-api-key"
-NEW_API_ID = "your-adzuna-app-id"
+GOOGLE_API_KEY = os.getenv("GEMINI_KEY")
+NEW_API_KEY = os.getenv("ADZUNA_KEY")
+NEW_API_ID = os.getenv("ADZUNA_ID")
 
 # Google Generative AI config
 genai.configure(api_key=GOOGLE_API_KEY)
 model = genai.GenerativeModel("gemini-pro")
 
 # MongoDB setup
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient(os.getenv("MONGOURI"))
 db = client["jobfit_ai"]
 collection = db["users"]
 
@@ -183,9 +189,8 @@ def register():
     name = data.get("name")
     email = data.get("email")
     password = data.get("password")
-    phone = data.get("phone")
 
-    if not all([name, email, password, phone]):
+    if not all([name, email, password]):
         return jsonify({"msg": "Missing fields"}), 400
 
     if collection.find_one({"email": email}):
@@ -196,14 +201,17 @@ def register():
         "name": name,
         "email": email,
         "password": password,
-        "phone": phone,
         "resume": "",  # As you mentioned before, add empty resume field
     }
 
-    collection.insert_one(user_data)
+    result = collection.insert_one(user_data)
+    user_response = {
+    "name": name,
+    "email": email
+}
 
     access_token = create_access_token(identity=email)
-    return jsonify({"msg": "User created", "token": access_token}), 201
+    return jsonify({"msg": "User created", "token": access_token, "user": user_response}), 201
 
 
 # ✅ LOGIN Route (returning token)
@@ -215,8 +223,12 @@ def login():
 
     user = collection.find_one({"email": email})
     if user and user["password"] == password:
+        user_response = {
+    "name": user["name"],
+    "email": user["email"]
+}
         access_token = create_access_token(identity=email)
-        return jsonify({"msg": "Login successful", "token": access_token}), 200
+        return jsonify({"msg": "Login successful", "token": access_token, "user":user_response}), 200
     return jsonify({"msg": "Invalid credentials"}), 401
 
 
