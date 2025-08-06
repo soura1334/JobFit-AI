@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, ChevronDown, ChevronRight, Sparkles } from 'lucide-react';
-import { useAuth } from '../Context/AuthContext';
-
+import { useAuth } from '../hook/auth';
 
 // Create MotionLink component
 const MotionLink = motion(NavLink);
@@ -28,15 +27,15 @@ const Navbar = () => {
   const navItems = [
     { name: "Home", path: "/home" },
     { name: "About", path: "/about" },
-    {
-      name: "Services",
-      path: "/services", // Add path for parent
-      dropdown: [
-        { name: "Progress Tracking", path: "/progress" },
-        { name: "Skill Gap Analysis", path: "/skill-gap" },
-        { name: "Recommendations", path: "/recommendations" },
-      ],
-    },
+    // {
+    //   name: "Services",
+    //   path: "/services", // Add path for parent
+    //   dropdown: [
+    //     { name: "Progress Tracking", path: "/progress" },
+    //     { name: "Skill Gap Analysis", path: "/skill-gap" },
+    //     { name: "Recommendations", path: "/recommendations" },
+    //   ],
+    // },
     { name: "Contact", path: "/contact" }, // Use consistent routing
   ];
 
