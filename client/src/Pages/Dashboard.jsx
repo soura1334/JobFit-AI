@@ -18,6 +18,7 @@ import {
 import JobSection from '../Components/DashboardParts/JobSection';
 import RoadmapSection from '../Components/DashboardParts/RoadmapSection';
 import AIAgentSection from '../Components/DashboardParts/AIAgentSection';
+import ProfileManagement from '../Components/DashboardParts/ProfileManagement';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -91,8 +92,7 @@ const Dashboard = () => {
       case 'profile':
         return (
           <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
-            <h2 className="text-2xl font-bold mb-4">Profile Settings</h2>
-            <p className="text-gray-600">Profile management component will be rendered here</p>
+            <ProfileManagement />
           </div>
         );
       default:
