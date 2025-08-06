@@ -24,8 +24,8 @@ export default function Mission() {
 
 function HeroImage() {
   return (
-    <div className="flex items-center">
-      <img src="/dashboard.png" className="shadow-2xl rounded-lg"></img>
+    <div className="flex items-center ">
+      <img src="/dashboard.png" className="shadow-2xl rounded-lg lg:h-90 h-50"></img>
     </div>
   );
 }
