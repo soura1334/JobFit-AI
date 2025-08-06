@@ -42,7 +42,7 @@ function ProfileGrid({ isEditing }) {
       <Field fname="Name" ftype="text" ph="Enter your name" />
       <Field fname="Email" ftype="email" ph="Enter your email" />
       <Field fname="Phone Number" ftype="phone" ph="Enter your number" />
-      <Field fname="Location" ftype="text" ph="Enter your location" />
+      <Field fname="Role" ftype="text" ph="Enter your role" />
       <MyDropzone />
       <div className="flex flex-row-reverse col-span-2 gap-4">
         <Button
