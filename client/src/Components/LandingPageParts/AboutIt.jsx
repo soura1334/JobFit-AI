@@ -269,7 +269,7 @@ const AboutIt = () => {
                     </h2>
                     <motion.button
                         onClick={handleClickToDashboard}
-                        className="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-12 py-4 rounded-full text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                        className="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-12 py-4 rounded-full text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
                         whileHover={{
                             scale: 1.05,
                             boxShadow: "0 20px 40px rgba(0,0,0,0.1)"

@@ -35,8 +35,8 @@ const Register = () => {
       case 'lastName':
         if (!value.trim()) {
           errors[name] = `${name === 'firstName' ? 'First' : 'Last'} name is required`;
-        } else if (value.length < 2) {
-          errors[name] = `${name === 'firstName' ? 'First' : 'Last'} name must be at least 2 characters`;
+        } else if (value.length < 3) {
+          errors[name] = `${name === 'firstName' ? 'First' : 'Last'} name must be at least 3 characters`;
         } else if (!/^[a-zA-Z\s]+$/.test(value)) {
           errors[name] = `${name === 'firstName' ? 'First' : 'Last'} name can only contain letters`;
         } else {
@@ -44,8 +44,8 @@ const Register = () => {
         }
         break;
       
-      case 'email':
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      case 'email':{
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{8,}$/;
         if (!value.trim()) {
           errors[name] = 'Email is required';
         } else if (!emailRegex.test(value)) {
@@ -54,14 +54,14 @@ const Register = () => {
           delete errors[name];
         }
         break;
-      
+      }
       case 'password':
         if (!value) {
           errors[name] = 'Password is required';
         } else if (value.length < 8) {
           errors[name] = 'Password must be at least 8 characters';
         } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])/.test(value)) {
-          errors[name] = 'Password must contain uppercase, lowercase, number, and special character';
+          errors[name] = 'Password must contain uppercase, lowercase, number, and special character [!@#$%^&*(),.?":{}|<>] at least once';
         } else {
           delete errors[name];
         }
