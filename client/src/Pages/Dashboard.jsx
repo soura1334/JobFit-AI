@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from "motion/react";
 import { Link } from 'react-router-dom';
+import { useAuth } from '../hook/auth';
+
 import {
   BarChart3,
   Briefcase,
@@ -11,7 +13,8 @@ import {
   Search,
   Menu,
   X,
-  Sparkles
+  Sparkles,
+  LogOut
 } from 'lucide-react';
 
 // import Footer from '../Components/Footer';
@@ -21,6 +24,9 @@ import AIAgentSection from '../Components/DashboardParts/AIAgentSection';
 import ProfileManagement from '../Components/DashboardParts/ProfileManagement';
 
 const Dashboard = () => {
+  const {logout } = useAuth();
+
+
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -32,6 +38,18 @@ const Dashboard = () => {
     { id: 'ai-assistant', name: 'AI Assistant', icon: Bot },
     { id: 'profile', name: 'Profile', icon: User },
   ];
+
+const LogoutButton = () => (
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    onClick={logout}
+    className="inline-flex items-center justify-center w-full px-6 py-2 rounded-xl md:rounded-lg bg-gradient-to-br from-rose-400 via-pink-600 to-red-600 text-white text-lg md:text-base font-semibold shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
+  >
+    <LogOut className="w-5 h-5 mr-2 text-white" />
+    Logout
+  </motion.button>
+);
 
 
   const OverviewSection = () => (
@@ -172,6 +190,7 @@ const Dashboard = () => {
                   <span className="font-medium">{item.name}</span>
                 </button>
               ))}
+            <LogoutButton />
             </nav>
           </div>
         </motion.div>
@@ -230,6 +249,7 @@ const Dashboard = () => {
                         <span className="font-medium">{item.name}</span>
                       </button>
                     ))}
+                    <LogoutButton />
                   </nav>
                 </div>
               </motion.div>
