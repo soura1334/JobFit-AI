@@ -22,6 +22,7 @@ import JobSection from '../Components/DashboardParts/JobSection';
 import RoadmapSection from '../Components/DashboardParts/RoadmapSection';
 import AIAgentSection from '../Components/DashboardParts/AIAgentSection';
 import ProfileManagement from '../Components/DashboardParts/ProfileManagement';
+import MissingSkills from '../Components/DashboardParts/MissingSkills';
 
 const Dashboard = () => {
   const {user, logout } = useAuth();
@@ -74,7 +75,7 @@ const Dashboard = () => {
           </div>
         </div>
       </motion.div>
-
+      <MissingSkills/>
       <JobSection />
       <RoadmapSection />
       <AIAgentSection />
