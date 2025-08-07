@@ -24,7 +24,7 @@ import AIAgentSection from '../Components/DashboardParts/AIAgentSection';
 import ProfileManagement from '../Components/DashboardParts/ProfileManagement';
 
 const Dashboard = () => {
-  const {logout } = useAuth();
+  const {user, logout } = useAuth();
 
 
   const [activeTab, setActiveTab] = useState('overview');
@@ -39,17 +39,17 @@ const Dashboard = () => {
     { id: 'profile', name: 'Profile', icon: User },
   ];
 
-const LogoutButton = () => (
-  <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    onClick={logout}
-    className="inline-flex items-center justify-center w-full px-6 py-2 rounded-xl md:rounded-lg bg-gradient-to-br from-rose-400 via-pink-600 to-red-600 text-white text-lg md:text-base font-semibold shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
-  >
-    <LogOut className="w-5 h-5 mr-2 text-white" />
-    Logout
-  </motion.button>
-);
+  const LogoutButton = () => (
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={logout}
+      className="inline-flex items-center justify-center w-full px-6 py-2 rounded-xl md:rounded-lg bg-gradient-to-br from-rose-400 via-pink-600 to-red-600 text-white text-lg md:text-base font-semibold shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
+    >
+      <LogOut className="w-5 h-5 mr-2 text-white" />
+      Logout
+    </motion.button>
+  );
 
 
   const OverviewSection = () => (
@@ -62,7 +62,8 @@ const LogoutButton = () => (
       >
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Welcome back, User! 👋</h1>
+            <h1 className="text-3xl font-bold mb-2">
+              Welcome back, {user?.firstName || 'User'}!  👋</h1>
             <p className="text-blue-100 text-lg">Ready to accelerate your career journey today?</p>
           </div>
           <div className="hidden md:flex items-center space-x-4">
@@ -161,7 +162,9 @@ const LogoutButton = () => (
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
               </button> */}
               <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-indigo-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">U</span>
+                <span className="text-white font-semibold text-sm">
+                  {user?.name?.charAt(0)||"U"}
+                </span>
               </div>
             </div>
           </div>
@@ -190,7 +193,7 @@ const LogoutButton = () => (
                   <span className="font-medium">{item.name}</span>
                 </button>
               ))}
-            <LogoutButton />
+              <LogoutButton />
             </nav>
           </div>
         </motion.div>

@@ -45,11 +45,8 @@ const Register = () => {
         break;
       
       case 'email':{
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!value.trim()) {
           errors[name] = 'Email is required';
-        } else if (!emailRegex.test(value)) {
-          errors[name] = 'Please enter a valid email address';
         } else {
           delete errors[name];
         }
@@ -140,7 +137,7 @@ const Register = () => {
         
         // Redirect after a brief delay to show success message
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate('/basicdetails');
         }, 1234);
       } else {
         setError(data.error || 'Registration failed. Please try again.');

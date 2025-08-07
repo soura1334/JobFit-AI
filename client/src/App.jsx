@@ -6,6 +6,7 @@ import DashboardPage from "./Pages/Dashboard";
 import { AuthProvider } from "./Context/AuthContext";
 import Contact from "./Pages/Contact";
 import About from "./Pages/About";
+import BasicDetailsPage from "./Pages/BasicDetails";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
+        <Route path="/basicdetails" element={<BasicDetailsPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
