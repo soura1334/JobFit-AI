@@ -87,7 +87,7 @@ const Login = () => {
         }
 
         try {
-            const response = await fetch('/api/login', {
+            const response = await fetch('http://localhost:5000/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ const Login = () => {
                 setSuccess('Login successful! Redirecting...');
                 
                 // Use the auth context to log the user in
-                login(data.access_token, data.user);
+                login(data.token, data.user);
                 
                 // Redirect after a brief delay to show success message
                 setTimeout(() => {

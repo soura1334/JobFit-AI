@@ -122,12 +122,12 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch('/api/register', {
+      const response = await fetch('http://localhost:5000/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({name:formData.firstName+' '+formData.lastName, email:formData.email, password: formData.password})
       });
 
       const data = await response.json();
@@ -136,7 +136,7 @@ const Register = () => {
         setSuccess('Registration successful! Redirecting...');
         
         // Use the auth context to log the user in
-        login(data.access_token, data.user);
+        login(data.token, data.user);
         
         // Redirect after a brief delay to show success message
         setTimeout(() => {
