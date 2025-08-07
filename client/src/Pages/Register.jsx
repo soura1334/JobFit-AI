@@ -45,7 +45,7 @@ const Register = () => {
         break;
       
       case 'email':{
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{8,}$/;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!value.trim()) {
           errors[name] = 'Email is required';
         } else if (!emailRegex.test(value)) {
