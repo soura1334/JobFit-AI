@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 from bson import ObjectId
 from werkzeug.utils import secure_filename
 import os
+from datetime import timedelta
 import fitz
 
 load_dotenv()
@@ -28,7 +29,7 @@ NEW_API_ID = os.getenv("ADZUNA_ID")
 
 # Google Generative AI config
 genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel("gemini-pro")
+model = genai.GenerativeModel("models/gemini-1.5-flash")
 
 # MongoDB setup
 client = MongoClient(os.getenv("MONGOURI"))
@@ -37,6 +38,7 @@ collection = db["users"]
 
 # JWT setup
 app.config["JWT_SECRET_KEY"] = "your-secret-key"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=7)  # ✅ 7-day expiry
 jwt = JWTManager(app)
 
 
@@ -53,7 +55,7 @@ def read():
     prompt = "enter your query here"
     return f"The prompt is: {prompt}"
 
-@app.route("/skills", methods=["GET"])
+@app.route("/skills", methods=["POST"])
 @jwt_required()
 def skills():
     email = get_jwt_identity()
@@ -68,11 +70,9 @@ def skills():
     if not job_role or not resume_text:
         return jsonify({"msg": "Missing job role or resume text in profile"}), 400
 
-    # Fetch job listings for that role
     jobs_data = job_listing(job_role)
     jobs_json = json.dumps(jobs_data, indent=2)
 
-    # Build the prompt with actual data
     prompt = f"""
 You are an expert job-seeking advisor.
 
@@ -91,14 +91,27 @@ Only return the JSON list — no explanation.
 
     try:
         response = model.generate_content(prompt)
-        skills_suggestion = response.text.strip()
+        skills_text = response.text.strip()
 
-        # Use the generated skills to create roadmap
-        roadmap_text = generate_roadmap(skills_suggestion)
+        print("Gemini raw output:", skills_text)
+
+        # ✅ Strip markdown code block formatting if present
+        if skills_text.startswith("```json"):
+            skills_text = skills_text.removeprefix("```json").strip()
+        if skills_text.endswith("```"):
+            skills_text = skills_text.removesuffix("```").strip()
+
+        try:
+            skills_list = json.loads(skills_text)
+        except json.JSONDecodeError as e:
+            print("JSON decode error:", e)
+            return jsonify({"msg": "Invalid response from Gemini", "raw": skills_text}), 500
+
+        roadmap = generate_roadmap(skills_list)
 
         return jsonify({
-            "skills": json.loads(skills_suggestion),  # safely parse JSON list
-            "roadmap": roadmap_text
+            "skills": skills_list,
+            "roadmap": roadmap
         }), 200
 
     except Exception as e:
@@ -106,28 +119,37 @@ Only return the JSON list — no explanation.
         return jsonify({"msg": "Failed to generate skills", "error": str(e)}), 500
 
 
-def generate_roadmap(skills_list_json):
+
+def generate_roadmap(skills_list):
     prompt = f"""
 You are an expert planner.
 
 I want you to create a 30-day learning roadmap to efficiently acquire the following skills:
-skills: {skills_list_json}
+skills: {skills_list}
 
-Give me a clear day-by-day plan in JSON format:
-{{
-  "Day 1": "Learn basics of Python",
-  "Day 2": "Work on variables and data types in Python",
+Give me a clear day-by-day plan in JSON format like this:
+[
+  {{"Day": 1, "Topic": "Learn basics of Python", "Resource": "https://youtube.com/@abc/python", "Notes": "Start with syntax and variables"}},
+  {{"Day": 2, "Topic": "Work on variables and data types in Python", "Resource": "https://youtube.com/@abc/python", "Notes": "Focus on numbers, strings, lists"}}
   ...
-}}
-Only return JSON.
+]
+Only return valid JSON. Do not include markdown (no ```json).
 """
+
     try:
         response = model.generate_content(prompt)
-        return json.loads(response.text.strip())
+        roadmap_text = response.text.strip()
+
+        # Remove Markdown code blocks if present
+        if roadmap_text.startswith("```"):
+            roadmap_text = roadmap_text.split("```")[1].strip()
+
+        return json.loads(roadmap_text)
 
     except Exception as e:
         print("Error:", e)
         return {"error": "Failed to generate roadmap"}
+
     
 
 @app.route("/updateProfile", methods=["POST"])
@@ -139,36 +161,58 @@ def update_profile():
     if not user:
         return jsonify({"msg": "User not found"}), 404
 
-    job_role = request.form.get("job_role")
-    if not job_role:
-        return jsonify({"msg": "Job role is required"}), 400
+    updates = {}
 
-    if "resume" not in request.files:
-        return jsonify({"msg": "Resume file is missing"}), 400
+    # ✅ Log incoming data for debugging
+    print("Form keys:", list(request.form.keys()))
+    print("File keys:", list(request.files.keys()))
 
-    file = request.files["resume"]
-    if file.filename == "" or not file.filename.endswith(".pdf"):
-        return jsonify({"msg": "Valid PDF file is required"}), 400
+    # ✅ Extract role
+    job_role = request.form.get("targetRole")
+    if job_role:
+        updates["job_role"] = job_role
 
-    try:
-        # ✅ Read PDF directly from memory
-        pdf_bytes = file.read()
-        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    # ✅ Handle resume upload (PDF, DOC, DOCX)
+    if "resume" in request.files:
+        file = request.files["resume"]
+        filename = file.filename.lower()
 
-        text = ""
-        for page in doc:
-            text += page.get_text()
-        doc.close()
+        if filename == "" or not (filename.endswith(".pdf") or filename.endswith(".doc") or filename.endswith(".docx")):
+            return jsonify({"msg": "Valid resume file required (PDF, DOC, or DOCX)"}), 400
 
-    except Exception as e:
-        return jsonify({"msg": "Failed to extract text from PDF", "error": str(e)}), 500
+        try:
+            if filename.endswith(".pdf"):
+                import fitz  # PyMuPDF
+                pdf_bytes = file.read()
+                doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+                text = ""
+                for page in doc:
+                    text += page.get_text()
+                doc.close()
+                updates["resume_text"] = text
+            else:
+                # For .doc/.docx files
+                from docx import Document
+                import tempfile
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as temp:
+                    temp.write(file.read())
+                    temp.flush()
+                    doc = Document(temp.name)
+                    text = "\n".join([para.text for para in doc.paragraphs])
+                    updates["resume_text"] = text
 
-    # ✅ Update MongoDB directly
-    collection.update_one(
-        {"email": email}, {"$set": {"resume_text": text, "job_role": job_role}}
-    )
+        except Exception as e:
+            return jsonify({"msg": "Failed to extract text from resume", "error": str(e)}), 500
 
-    return jsonify({"msg": "Profile updated with resume text and job role"}), 200
+    if not updates:
+        return jsonify({"msg": "No data provided for update"}), 400
+
+    collection.update_one({"email": email}, {"$set": updates})
+    return jsonify({
+        "msg": "Profile updated successfully",
+        "updated_fields": list(updates.keys())
+    }), 200
+
 
 
 # Job listing function
