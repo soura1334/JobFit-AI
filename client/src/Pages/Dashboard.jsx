@@ -27,7 +27,6 @@ import MissingSkills from '../Components/DashboardParts/MissingSkills';
 const Dashboard = () => {
   const {user, logout } = useAuth();
 
-
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -64,7 +63,7 @@ const Dashboard = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold mb-2">
-              Welcome back, {user?.firstName || 'User'}!  👋</h1>
+              Welcome back, {user?.name.split(' ')[0] || 'User'}!  👋</h1>
             <p className="text-blue-100 text-lg">Ready to accelerate your career journey today?</p>
           </div>
           <div className="hidden md:flex items-center space-x-4">

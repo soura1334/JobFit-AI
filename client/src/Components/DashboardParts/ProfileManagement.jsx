@@ -1,14 +1,21 @@
-import { createContext, use, useContext, useReducer, useState } from "react";
-import MyDropzone from "./MyDropzone";
-import { CircleX, Pencil, Save } from "lucide-react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
+import { CircleX, FileText, Pencil, Save, SquarePen } from "lucide-react";
+import { openDB } from "idb";
+import { useAuth } from "../../hook/auth";
 
 const EditContext = createContext();
 
 const initialState = {
-  name: "User",
-  email: "user@email.com",
-  phone: "+91-1800191192",
-  role: "Software Developer",
+  role: "",
+  resumeFile: null, 
+  resumeURL: "", 
+  fileName: "",
 };
 
 function reducer(state, action) {
@@ -16,26 +23,28 @@ function reducer(state, action) {
     case "submit":
       return {
         ...state,
-        name: action.payload.name,
-        email: action.payload.email,
-        phone: action.payload.phone,
         role: action.payload.role,
+        resumeFile: action.payload.resumeFile,
       };
 
-    case "edit/name":
-      return { ...state, name: action.payload };
-    case "edit/phone":
-      return { ...state, phone: action.payload };
-    case "edit/email":
-      return { ...state, email: action.payload };
     case "edit/role":
       return { ...state, role: action.payload };
+
+    case "edit/resume":
+      return {
+        ...state,
+        resumeFile: action.payload.file,
+        resumeURL: action.payload.url,
+        fileName: action.payload.fileName,
+      };
+
+    default:
+      return state;
   }
 }
 
 export default function ProfileManagement() {
   const [isEditing, setIsEditing] = useState(false);
-
   const [state, dispatch] = useReducer(reducer, initialState);
 
   function enableEditing(e) {
@@ -48,6 +57,50 @@ export default function ProfileManagement() {
     setIsEditing(false);
   }
 
+  async function updateDB(newData) {
+    const db = await openDB("userDB", 1);
+    const storedUser = await db.get("users", 1);
+
+    if (storedUser) {
+      if (newData.role !== undefined) {
+        storedUser.role = newData.role;
+      }
+      if (newData.resumeFile !== undefined && newData.resumeFile !== null) {
+        storedUser.resume = newData.resumeFile; 
+      }
+      await db.put("users", storedUser);
+    }
+  }
+
+  useEffect(() => {
+    async function fetchUserDetails() {
+      const db = await openDB("userDB", 1);
+      const storedUser = await db.get("users", 1);
+
+      if (storedUser) {
+        dispatch({ type: "edit/role", payload: storedUser.role });
+
+        if (storedUser.resume instanceof Blob) {
+          dispatch({
+            type: "edit/resume",
+            payload: {
+              file: storedUser.resume,
+              url: URL.createObjectURL(storedUser.resume),
+              fileName: storedUser.resume.name || "resume",
+            },
+          });
+        } else {
+          dispatch({
+            type: "edit/resume",
+            payload: { file: null, url: "", fileName: "" },
+          });
+        }
+      }
+    }
+
+    fetchUserDetails();
+  }, []);
+
   return (
     <EditContext.Provider
       value={{
@@ -56,7 +109,8 @@ export default function ProfileManagement() {
         dispatch,
         state,
         isEditing,
-        setIsEditing
+        setIsEditing,
+        updateDB,
       }}
     >
       <div>
@@ -70,53 +124,35 @@ export default function ProfileManagement() {
 }
 
 function ProfileGrid() {
-  const { isEditing, enableEditing, cancelEditing, dispatch, state, setIsEditing } =
-    useContext(EditContext);
+  const {
+    isEditing,
+    enableEditing,
+    cancelEditing,
+    dispatch,
+    state,
+    setIsEditing,
+    updateDB,
+  } = useContext(EditContext);
 
-  const { name, email, phone, role } = state;
+  const { role, resumeFile } = state;
+  const { user } = useAuth();
+  const { name, email } = user;
 
-  function handleName(e) {
-    dispatch({ type: "edit/name", payload: e.target.value });
-  }
-  function handleEmail(e) {
-    dispatch({ type: "edit/email", payload: e.target.value });
-  }
-  function handlePhone(e) {
-    dispatch({ type: "edit/phone", payload: e.target.value });
-  }
   function handleRole(e) {
     dispatch({ type: "edit/role", payload: e.target.value });
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    dispatch({type: 'submit', payload: state})
+    dispatch({ type: "submit", payload: state });
+    updateDB({ role, resumeFile });
     setIsEditing(false);
   }
 
   return (
-    <form className="grid grid-cols-2 gap-5" >
-      <Field
-        fname="Name"
-        ftype="text"
-        ph="Enter your name"
-        val={name}
-        handler={handleName}
-      />
-      <Field
-        fname="Email"
-        ftype="email"
-        ph="Enter your email"
-        val={email}
-        handler={handleEmail}
-      />
-      <Field
-        fname="Phone Number"
-        ftype="phone"
-        ph="Enter your number"
-        val={phone}
-        handler={handlePhone}
-      />
+    <form className="grid grid-cols-2 gap-5">
+      <Field fname="Name" ftype="text" ph="" val={name} />
+      <Field fname="Email" ftype="email" ph="" val={email} />
       <Field
         fname="Role"
         ftype="text"
@@ -124,7 +160,7 @@ function ProfileGrid() {
         val={role}
         handler={handleRole}
       />
-      <MyDropzone />
+      <Resume />
       <div className="flex flex-row-reverse col-span-2 gap-4">
         <Button
           status={isEditing ? "hidden" : ""}
@@ -155,9 +191,59 @@ function ProfileGrid() {
   );
 }
 
-function Field({ fname, ftype, ph, val, handler }) {
+function Resume() {
+  const { state, isEditing, dispatch } = useContext(EditContext);
+  const { fileName, resumeURL } = state;
 
-  const {isEditing} = useContext(EditContext);
+  return (
+    <div className="col-span-2 w-[40vw] flex flex-col">
+      <p className="text-lg font-semibold mb-2">Resume</p>
+      <div className="flex gap-4 items-center">
+        <div className="border w-fit p-4 rounded-lg flex gap-2 bg-gradient-to-r from-teal-50 to-emerald-50">
+          <FileText />
+          <p>{fileName}</p>
+          {resumeURL && (
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href={resumeURL}
+              className="text-blue-500 hover:text-blue-800"
+            >
+              (Click to view)
+            </a>
+          )}
+        </div>
+        {isEditing && (
+          <label className="flex border h-fit p-2 px-5 gap-2 rounded-xl bg-blue-600 text-white items-center cursor-pointer">
+            <SquarePen size={20} />
+            <p>Update</p>
+            <input
+              type="file"
+              className="hidden"
+              accept=".pdf,.doc,.docx"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  dispatch({
+                    type: "edit/resume",
+                    payload: {
+                      file,
+                      url: URL.createObjectURL(file),
+                      fileName: file.name,
+                    },
+                  });
+                }
+              }}
+            />
+          </label>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Field({ fname, ftype, ph, val, handler }) {
+  const { isEditing } = useContext(EditContext);
 
   return (
     <div className="w-[20vw]">
@@ -172,11 +258,15 @@ function Field({ fname, ftype, ph, val, handler }) {
         type={ftype}
         placeholder={ph}
         value={val}
-        disabled={!isEditing}
+        disabled={fname === "Name" || fname === "Email" ? true : !isEditing}
         required
         onChange={handler}
-        className="border rounded-lg px-2 py-1 w-full"
-      ></input>
+        className={`${
+          (fname === "Name" || fname === "Email" ? true : !isEditing)
+            ? "bg-gray-100"
+            : ""
+        } border rounded-lg px-2 py-1 w-full`}
+      />
     </div>
   );
 }

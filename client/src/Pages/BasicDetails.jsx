@@ -1,17 +1,12 @@
 "use client";
 
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Target,
-  ArrowRight,
-  CheckCircle,
-  Upload,
-  FileText,
-  Sparkles,
-} from "lucide-react";
+import { Target, ArrowRight, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { AuthContext } from "../Context/AuthContext";
+import UploadResume from "../Components/UploadResume";
+import { openDB } from "idb";
 
 const BasicDetails = () => {
   const navigate = useNavigate();
@@ -31,6 +26,18 @@ const BasicDetails = () => {
   const handleFileUpload = (file) => {
     setFormData((prev) => ({ ...prev, resumeFile: file }));
   };
+
+  async function storeUserDetails(userData) {
+    const db = await openDB("userDB", 1, {
+      upgrade(db) {
+        if (!db.objectStoreNames.contains("users")) {
+          db.createObjectStore("users", { keyPath: "id" });
+        }
+      },
+    });
+
+    await db.put("users", userData);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -65,13 +72,23 @@ const BasicDetails = () => {
 
       setFormData((prev) => ({ ...prev, profileCompleted: true }));
 
+      const userData = {
+        id: 1,
+        role: formData.targetRole,
+        resume: formData.resumeFile
+      };
+
+      storeUserDetails(userData);
+
       setTimeout(() => {
         alert("Profile completed! Ready to find your dream job!");
         navigate("/dashboard");
       }, 1000);
     } catch (error) {
       console.error("Profile completion failed:", error);
-      alert(error.message || "Something went wrong while updating your profile.");
+      alert(
+        error.message || "Something went wrong while updating your profile."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -163,80 +180,10 @@ const BasicDetails = () => {
 
             <div className="border-t border-gray-200"></div>
 
-            <div className="space-y-6">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-purple-600" />
-                </div>
-                <h2 className="text-xl font-bold text-gray-900">
-                  Upload Your Resume
-                </h2>
-              </div>
-
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
-                {formData.resumeFile ? (
-                  <div className="space-y-4">
-                    <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
-                    <div>
-                      <p className="text-lg font-medium text-gray-900">
-                        {formData.resumeFile.name}
-                      </p>
-                      <p className="text-green-600 font-medium">
-                        Resume uploaded successfully!
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => handleFileUpload(null)}
-                        className="mt-2 text-blue-600 hover:text-blue-700 underline transition-colors"
-                      >
-                        Upload different file
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <Upload className="w-16 h-16 text-gray-400 mx-auto" />
-                    <div>
-                      <p className="text-lg font-medium text-gray-900">
-                        Upload your resume *
-                      </p>
-                      <p className="text-gray-600">
-                        Drag and drop your PDF file here, or click to browse
-                      </p>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Supported formats: PDF, DOC, DOCX
-                      </p>
-                    </div>
-                    <input
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      onChange={(e) => handleFileUpload(e.target.files[0])}
-                      className="hidden"
-                      id="resume-upload"
-                      required
-                    />
-                    <label
-                      htmlFor="resume-upload"
-                      className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer transition-colors font-medium"
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Choose File
-                    </label>
-                  </div>
-                )}
-              </div>
-
-              <div className="bg-blue-50 rounded-lg p-4">
-                <div className="flex items-start space-x-3">
-                  <Sparkles className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-blue-800">
-                    <strong>Pro Tip:</strong> A well-formatted resume helps our
-                    AI provide better job recommendations and career insights
-                    tailored specifically to your experience.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <UploadResume
+              formData={formData}
+              handleFileUpload={handleFileUpload}
+            />
 
             <div className="flex justify-center pt-6">
               <button
