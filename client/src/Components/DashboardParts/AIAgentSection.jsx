@@ -18,7 +18,7 @@ const AIAgentSection = ({ initialMessages = null }) => {
   const [chatMessage, setChatMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  
+
   const defaultMessages = [
     {
       type: 'ai',
@@ -30,10 +30,20 @@ const AIAgentSection = ({ initialMessages = null }) => {
 
   const [chatHistory, setChatHistory] = useState(initialMessages || defaultMessages);
 
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (chatHistory.length > 1 || isTyping) {
+      scrollToBottom();
+    }
+  }, [chatHistory, isTyping]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleSendMessage = () => {
     if (!chatMessage.trim()) return;
-    
+
     const userMessage = {
       type: 'user',
       message: chatMessage,
@@ -87,7 +97,10 @@ const AIAgentSection = ({ initialMessages = null }) => {
 
   const handleSuggestionClick = (suggestion) => {
     setChatMessage(suggestion);
-    handleSendMessage();
+    // Use setTimeout to ensure the message is set before sending
+    setTimeout(() => {
+      handleSendMessage();
+    }, 0);
   };
 
   const quickActions = [
@@ -175,27 +188,24 @@ const AIAgentSection = ({ initialMessages = null }) => {
               >
                 <div className={`max-w-xs lg:max-w-md ${msg.type === 'user' ? 'order-2' : 'order-1'}`}>
                   <div className={`flex items-start space-x-2 ${msg.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      msg.type === 'user' 
-                        ? 'bg-blue-500' 
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.type === 'user'
+                        ? 'bg-blue-500'
                         : 'bg-gradient-to-r from-purple-500 to-pink-500'
-                    }`}>
-                      {msg.type === 'user' ? 
-                        <User className="w-4 h-4 text-white" /> : 
+                      }`}>
+                      {msg.type === 'user' ?
+                        <User className="w-4 h-4 text-white" /> :
                         <Bot className="w-4 h-4 text-white" />
                       }
                     </div>
-                    
-                    <div className={`px-4 py-3 rounded-lg max-w-full ${
-                      msg.type === 'user' 
-                        ? 'bg-blue-500 text-white' 
+
+                    <div className={`px-4 py-3 rounded-lg max-w-full ${msg.type === 'user'
+                        ? 'bg-blue-500 text-white'
                         : 'bg-white text-gray-800 shadow-sm border border-gray-100'
-                    }`}>
+                      }`}>
                       <p className="text-sm leading-relaxed">{msg.message}</p>
                       {msg.timestamp && (
-                        <p className={`text-xs mt-1 ${
-                          msg.type === 'user' ? 'text-blue-100' : 'text-gray-500'
-                        }`}>
+                        <p className={`text-xs mt-1 ${msg.type === 'user' ? 'text-blue-100' : 'text-gray-500'
+                          }`}>
                           {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       )}
@@ -244,7 +254,7 @@ const AIAgentSection = ({ initialMessages = null }) => {
               </div>
             </motion.div>
           )}
-          
+
           <div ref={messagesEndRef} />
         </div>
 
@@ -269,7 +279,7 @@ const AIAgentSection = ({ initialMessages = null }) => {
               <span className="hidden sm:inline">Send</span>
             </button>
           </div>
-          
+
           <div className="flex items-center justify-between mt-3">
             <p className="text-xs text-gray-500 flex items-center">
               <Lightbulb className="w-3 h-3 mr-1" />
