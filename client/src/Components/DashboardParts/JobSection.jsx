@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { Search, Filter } from "lucide-react";
 import JobCard from "./JobCard";
+import { openDB } from "idb";
+import Loader from "../Loader";
 
 const BASE_URL = "https://api.adzuna.com/v1/api/jobs/";
 
@@ -12,6 +14,7 @@ const JobSection = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [jobsData, setJobsData] = useState([]);
   const [loadCounter, setLoadCounter] = useState(5);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getCompanyInitials = (companyName) => {
     return companyName
@@ -22,7 +25,23 @@ const JobSection = () => {
       .slice(0, 2);
   };
 
+  useEffect(
+    function () {
+      async function fetchRole() {
+        const db = await openDB("userDB", 1);
+        const storedUser = await db.get("users", 1);
+
+        if (storedUser) {
+          setSearchQuery(storedUser.role);
+        }
+      }
+      fetchRole();
+    },
+    [setSearchQuery]
+  );
+
   useEffect(() => {
+    setIsLoading(true);
     const timeout = setTimeout(() => {
       async function fetchJobs() {
         if (searchQuery.trim().length === 0) return;
@@ -33,11 +52,12 @@ const JobSection = () => {
           )}&results_per_page=50`
         );
         const data = await res.json();
+        setIsLoading(false);
         setJobsData(data.results);
       }
 
       fetchJobs();
-    }, 600);
+    }, 400);
 
     return () => clearTimeout(timeout);
   }, [searchQuery]);
@@ -90,7 +110,7 @@ const JobSection = () => {
 
       {/* Job Cards */}
       <div className="space-y-4">
-        {jobsData.length === 0 ? (
+        {jobsData.length === 0 ? (isLoading ? <Loader /> : (
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-8 h-8 text-gray-400" />
@@ -100,7 +120,7 @@ const JobSection = () => {
             </h3>
             <p className="text-gray-600">Try adjusting your search criteria</p>
           </div>
-        ) : (
+        ) ) : (
           visibleJobs.map((job, index) => {
             const companyInitials = getCompanyInitials(
               job.company.display_name
