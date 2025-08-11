@@ -1,14 +1,34 @@
-import { motion } from "motion/react";
-import { useNavigate } from 'react-router-dom';
+import { delay, motion } from "motion/react";
+import { useNavigate } from "react-router-dom";
 
+const containerVariants = {
+  hidden: {
+    opacity: 0,
+    y: -20,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: 0.3,
+      duration: 1,
+    },
+  },
+};
 
 export default function CTA() {
   const navigate = useNavigate();
-      const handleClickToDashboard = () => {
-        navigate('/dashboard');
-    };
+  const handleClickToDashboard = () => {
+    navigate("/dashboard");
+  };
   return (
-    <div className="p-5 my-10 flex flex-col items-center gap-10">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{once: true, amount: 0.7}}
+      className="p-5 my-10 flex flex-col items-center gap-10"
+    >
       <div className="lg:text-5xl text-4xl font-bold text-center">
         <p className="mb-5">Bridge your gap</p>
         <p>Land your dream job today</p>
@@ -24,6 +44,6 @@ export default function CTA() {
       >
         Get Started
       </motion.button>
-    </div>
+    </motion.div>
   );
 }

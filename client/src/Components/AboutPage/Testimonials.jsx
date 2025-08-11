@@ -1,14 +1,67 @@
+import { motion } from "motion/react";
+
+const containerVariants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      delay: 0.5,
+      duration: 1,
+      staggerChildren: 0.5,
+      delayChildren: 0.5,
+    },
+  },
+};
+
+const childVariants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.5,
+      delayChildren: 0.5,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: {
+    x: -20,
+    opacity: 0,
+  },
+  visible: {
+    x: 0,
+    opacity: 1,
+  },
+};
+
 export default function Testimonials() {
   return (
-    <div className="mt-5 p-5 flex flex-col items-center">
-      <div className="text-center flex flex-col gap-5">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.3 }}
+      className="mt-5 p-5 flex flex-col items-center"
+    >
+      <motion.div
+        variants={childVariants}
+        className="text-center flex flex-col gap-5"
+      >
         <h2 className="text-5xl font-bold">What Our Users Say</h2>
         <p className="text-lg text-gray-800">
           Real feedback from people who transformed their job search with JobFit
           AI
         </p>
-      </div>
-      <div className="grid lg:grid-cols-3 w-full gap-5 mt-12">
+      </motion.div>
+      <motion.div
+        variants={childVariants}
+        className="grid lg:grid-cols-3 w-full gap-5 mt-12"
+      >
         <TestimonialCard
           name="Aarav Mehta"
           role="Frontend Developer"
@@ -24,17 +77,20 @@ export default function Testimonials() {
         <TestimonialCard
           name="Rahul Verma"
           role="Final Year CS Student"
-          quote="As a fresher, I wasn&apos;t sure where I stood. JobFit AI made everything clearer and helped me focus my learning."
+          quote="As a fresher, I wasn't sure where I stood. JobFit AI made everything clearer and helped me focus my learning."
           imgn="men/69.jpg"
         />
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
 function TestimonialCard({ name, role, quote, imgn }) {
   return (
-    <div className="bg-white rounded-lg shadow-xl p-5 flex flex-col justify-evenly gap-5  h-[40vh]">
+    <motion.div
+      variants={cardVariants}
+      className="bg-white rounded-lg shadow-xl p-5 flex flex-col justify-evenly gap-5  h-[40vh] hover:shadow-2xl hover:bg-purple-50"
+    >
       <div className="flex gap-4 items-center">
         <img
           src={`https://randomuser.me/api/portraits/${imgn}`}
@@ -47,6 +103,6 @@ function TestimonialCard({ name, role, quote, imgn }) {
         </div>
       </div>
       <p className="text-gray-600">{quote}</p>
-    </div>
+    </motion.div>
   );
 }
