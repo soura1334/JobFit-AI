@@ -9,6 +9,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { AuthContext } from "../../Context/AuthContext";
+import Loader from "../Loader"
 
 const RoadmapSection = () => {
   const { token } = useContext(AuthContext);
@@ -48,27 +49,26 @@ const RoadmapSection = () => {
 
   if (loading) {
     return (
-      <div className="text-center py-8 text-lg">Loading roadmap...</div>
+      <Loader />
     );
   }
 
   return (
-    <section className="py-16 px-4 md:px-20 bg-white dark:bg-gray-900">
+    <section className="py-16 px-4 md:px-20 bg-white shadow-xl rounded-lg">
       <div className="max-w-5xl mx-auto">
-        <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
+        <h2 className="text-3xl font-bold mb-6 ">
           Personalized Learning Roadmap
         </h2>
 
         {skills.length > 0 && (
-          <div className="mb-6 text-gray-700 dark:text-gray-300">
+          <div className="mb-6 ">
             <strong>Skills you need to learn:</strong>{" "}
             {skills.join(", ")}
           </div>
         )}
 
-        {/* 🟡 No Data Available Case */}
         {!roadmapData.length ? (
-          <div className="text-center text-gray-600 dark:text-gray-300 py-10 text-lg border border-dashed border-gray-300 dark:border-gray-600 rounded-xl">
+          <div className="text-center py-10 text-lg border border-gray-400  rounded-xl">
             🚀 No roadmap data available. You might already have all the required knowledge!
           </div>
         ) : (

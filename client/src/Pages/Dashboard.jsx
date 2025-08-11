@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from "motion/react";
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hook/auth';
-
 import {
   BarChart3,
   Briefcase,
@@ -25,7 +24,7 @@ import ProfileManagement from '../Components/DashboardParts/ProfileManagement';
 import MissingSkills from '../Components/DashboardParts/MissingSkills';
 
 const Dashboard = () => {
-  const {user, logout } = useAuth();
+  const {user, logout} = useAuth();
 
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);

@@ -13,8 +13,8 @@ const EditContext = createContext();
 
 const initialState = {
   role: "",
-  resumeFile: null, 
-  resumeURL: "", 
+  resumeFile: null,
+  resumeURL: "",
   fileName: "",
 };
 
@@ -46,6 +46,7 @@ function reducer(state, action) {
 export default function ProfileManagement() {
   const [isEditing, setIsEditing] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
+  const { token } = useAuth();
 
   function enableEditing(e) {
     e.preventDefault();
@@ -66,7 +67,7 @@ export default function ProfileManagement() {
         storedUser.role = newData.role;
       }
       if (newData.resumeFile !== undefined && newData.resumeFile !== null) {
-        storedUser.resume = newData.resumeFile; 
+        storedUser.resume = newData.resumeFile;
       }
       await db.put("users", storedUser);
     }
@@ -142,10 +143,37 @@ function ProfileGrid() {
     dispatch({ type: "edit/role", payload: e.target.value });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     dispatch({ type: "submit", payload: state });
     updateDB({ role, resumeFile });
+
+    try {
+      const data = new FormData();
+      data.append("targetRole", role);
+      if (resumeFile) {
+        data.append("resume", resumeFile);
+      }
+
+      const response = await fetch("http://localhost:5000/updateProfile", {
+        method: "POST",
+        body: data,
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.msg || "Failed to update profile");
+      }
+
+      const result = await response.json();
+      console.log("Profile updated:", result);
+    } catch (err) {
+      console.error(err);
+    }
+
     setIsEditing(false);
   }
 

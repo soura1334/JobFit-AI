@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
+import Loader from "../Loader";
 
 const MissingSkills = () => {
   const { token } = useContext(AuthContext);
@@ -41,7 +42,7 @@ const MissingSkills = () => {
   }, [token]);
 
   if (loading) {
-    return <div className="text-gray-500 text-sm py-4">Loading skills...</div>;
+    return <Loader />;
   }
 
   if (error) {
@@ -55,7 +56,7 @@ const MissingSkills = () => {
   return (
     <section className="mb-10">
       <h3 className="text-xl font-semibold text-black mb-2">
-        🔍 Missing Skills
+        Missing Skills
       </h3>
 
       {skills.length > 0 ? (
@@ -63,7 +64,7 @@ const MissingSkills = () => {
           {skills.map((skill, index) => (
             <span
               key={index}
-              className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-full text-sm font-medium"
+              className="px-3 py-1 bg-white shadow-xl text-gray-600 hover:bg-gray-200 transition-all hover:shadow-2xl rounded-full text-sm font-medium"
             >
               {skill}
             </span>
@@ -71,7 +72,7 @@ const MissingSkills = () => {
         </div>
       ) : (
         <div className="text-green-600 dark:text-green-400 text-sm font-medium">
-          ✅ Great! You have all the required skills for your target job role.
+          Great! You have all the required skills for your target job role.
         </div>
       )}
     </section>
